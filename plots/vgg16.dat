@@ -1,0 +1,306 @@
+****VGG16 Model****
+Starting Step 0
+Starting Step 0
+Starting Step 0
+Starting Step 0
+Starting Step 0
+Starting Step 0
+Starting Step 0
+Starting Step 0
+Starting Step 0
+Starting Step 0
+Starting Step 0
+Starting Step 0
+Starting Step 0
+Starting Step 0
+Starting Step 0
+Starting Step 0
+Starting Step 1
+Starting Step 1
+Starting Step 1
+Starting Step 1
+Starting Step 1
+Starting Step 1
+Starting Step 1
+Starting Step 1
+Starting Step 1
+Starting Step 1
+Starting Step 1
+Starting Step 1
+Starting Step 1
+Starting Step 1
+Starting Step 1
+Starting Step 1
+Starting Step 2
+Starting Step 2
+Starting Step 2
+Starting Step 2
+Starting Step 2
+Starting Step 2
+Starting Step 2
+Starting Step 2
+Starting Step 2
+Starting Step 2
+Starting Step 2
+Starting Step 2
+Starting Step 2
+Starting Step 2
+Starting Step 2
+Starting Step 2
+STEP 0
+Time 69.025558
+	 Initial Bcast 0.050257
+	 **** FP ****
+	 Layer 1 (type Conv)
+		 FP Computation time 6.577634 (im2col = 2.365216) | GFlops 36.965317 (Procs 8) GFlops/core 0.770111 (cores 48)  Communication time Gather 0.403968 (Procs 8)| Bcast 0.872260 (Procs 8)
+	 Layer 2 (type Conv)
+		 FP Computation time 6.297101 (im2col = 2.090561) | GFlops 38.612105 (Procs 8) GFlops/core 0.804419 (cores 48)  Communication time Gather 0.255401 (Procs 8)| Bcast 0.902185 (Procs 16)
+	 Layer 3 (type Conv)
+		 FP Computation time 3.028204 (im2col = 1.190100) | GFlops 78.184982 (Procs 16) GFlops/core 0.814427 (cores 96)  Communication time Gather 0.182427 (Procs 16)| Bcast 0.549238 (Procs 16)
+	 Layer 4 (type Conv)
+		 FP Computation time 2.975142 (im2col = 1.041947) | GFlops 79.579419 (Procs 16) GFlops/core 0.828952 (cores 96)  Communication time Gather 0.152421 (Procs 16)| Bcast 0.263171 (Procs 16)
+	 Layer 5 (type Conv)
+		 FP Computation time 0.729686 (im2col = 0.516778) | GFlops 324.468422 (Procs 16) GFlops/core 3.379879 (cores 96)  Communication time Gather 0.077259 (Procs 16)| Bcast 0.132060 (Procs 16)
+	 Layer 6 (type Conv)
+		 FP Computation time 0.731848 (im2col = 0.516653) | GFlops 323.509898 (Procs 16) GFlops/core 3.369895 (cores 96)  Communication time Gather 0.078056 (Procs 16)| Bcast 0.132190 (Procs 16)
+	 Layer 7 (type Conv)
+		 FP Computation time 0.731471 (im2col = 0.517751) | GFlops 323.676714 (Procs 16) GFlops/core 3.371632 (cores 96)  Communication time Gather 0.078113 (Procs 16)| Bcast 0.132175 (Procs 16)
+	 Layer 8 (type Conv)
+		 FP Computation time 0.432511 (im2col = 0.267702) | GFlops 547.408094 (Procs 16) GFlops/core 5.702168 (cores 96)  Communication time Gather 0.031464 (Procs 16)| Bcast 0.065175 (Procs 16)
+	 Layer 9 (type Conv)
+		 FP Computation time 0.431100 (im2col = 0.266603) | GFlops 549.200027 (Procs 16) GFlops/core 5.720834 (cores 96)  Communication time Gather 0.031473 (Procs 16)| Bcast 0.065243 (Procs 16)
+	 Layer 10 (type Conv)
+		 FP Computation time 0.430943 (im2col = 0.266512) | GFlops 549.399957 (Procs 16) GFlops/core 5.722916 (cores 96)  Communication time Gather 0.031740 (Procs 16)| Bcast 0.065291 (Procs 16)
+	 Layer 11 (type Conv)
+		 FP Computation time 0.108173 (im2col = 0.068619) | GFlops 547.178555 (Procs 16) GFlops/core 5.699777 (cores 96)  Communication time Gather 0.007926 (Procs 16)| Bcast 0.021506 (Procs 16)
+	 Layer 12 (type Conv)
+		 FP Computation time 0.108130 (im2col = 0.068615) | GFlops 547.396930 (Procs 16) GFlops/core 5.702051 (cores 96)  Communication time Gather 0.007903 (Procs 16)| Bcast 0.021355 (Procs 16)
+	 Layer 13 (type Conv)
+		 FP Computation time 0.108112 (im2col = 0.068561) | GFlops 547.488675 (Procs 16) GFlops/core 5.703007 (cores 96)  Communication time Gather 0.007893 (Procs 16)| Bcast 0.014853 (Procs 8)
+	 Layer 14 (type FC)
+		 FP Computation time 0.094228 | GFlops 558.361984 (Procs 8) GFlops/core 11.632541 (cores 48)  Communication time Gather 0.000373 (Procs 8)| Bcast 0.001077 (Procs 8)
+	 Layer 15 (type FC)
+		 FP Computation time 0.002999 | GFlops 716.107430 (Procs 8) GFlops/core 14.918905 (cores 48)  Communication time Gather 0.000302 (Procs 8)| Bcast 0.000211 (Procs 2)
+	 Layer 16 (type FC)
+		 FP Computation time 0.003291 | GFlops 159.474192 (Procs 2) GFlops/core 13.289516 (cores 12)  Communication time Gather 0.000087 (Procs 2)| Bcast 0.000000 (Procs 2)
+	 **** BP ****
+	 Layer 16 (type FC)
+		 CG  Computation time 0.000000 | GFlops 0.000000 (Procs 2) GFlops/core 0.000000 (cores 12)| Communication time Reduce 0.000180 (Procs 2)| Bcast 0.000261 (Procs 2)
+		 WU  Computation time 0.004422 | GFlops 118.683468 (Procs 2) GFlops/core 9.890289 (cores 12)
+	 Layer 15 (type FC)
+		 CG  Computation time 0.003699 | GFlops 141.886185 (Procs 2) GFlops/core 11.823849 (cores 12)| Communication time Reduce 0.000629 (Procs 2)| Bcast 0.000756 (Procs 8)
+		 WU  Computation time 0.007627 | GFlops 281.562965 (Procs 8) GFlops/core 5.865895 (cores 48)
+	 Layer 14 (type FC)
+		 CG  Computation time 0.004299 | GFlops 499.539640 (Procs 8) GFlops/core 10.407076 (cores 48)| Communication time Reduce 0.000205 (Procs 8)| Bcast 0.000797 (Procs 8)
+		 WU  Computation time 0.158965 | GFlops 330.974690 (Procs 8) GFlops/core 6.895306 (cores 48)
+	 Layer 13 (type Conv)
+		 CG  Computation time 0.107921 (im2col = 0.068792) | GFlops 548.456281 (Procs 8) GFlops/core 5.713086 (cores 48)| Communication time Reduce 0.000160 (Procs 8)| Bcast 0.022485 (Procs 16)
+		 WU  Computation time 0.107811 (im2col = 0.068726) | GFlops 549.015419 (Procs 16) GFlops/core 5.718911 (cores 96)
+	 Layer 12 (type Conv)
+		 CG  Computation time 0.108025 (im2col = 0.068910) | GFlops 547.928512 (Procs 16) GFlops/core 5.707589 (cores 96)| Communication time Reduce 0.000131 (Procs 16)| Bcast 0.020283 (Procs 16)
+		 WU  Computation time 0.107887 (im2col = 0.068782) | GFlops 548.629601 (Procs 16) GFlops/core 5.714892 (cores 96)
+	 Layer 11 (type Conv)
+		 CG  Computation time 0.107958 (im2col = 0.068878) | GFlops 548.268540 (Procs 16) GFlops/core 5.711131 (cores 96)| Communication time Reduce 0.000366 (Procs 16)| Bcast 0.070779 (Procs 16)
+		 WU  Computation time 0.107879 (im2col = 0.068732) | GFlops 548.669614 (Procs 16) GFlops/core 5.715308 (cores 96)
+	 Layer 10 (type Conv)
+		 CG  Computation time 0.107991 (im2col = 0.068838) | GFlops 548.101499 (Procs 16) GFlops/core 5.709391 (cores 96)| Communication time Reduce 0.000323 (Procs 16)| Bcast 0.058055 (Procs 16)
+		 WU  Computation time 0.430101 (im2col = 0.267673) | GFlops 550.475626 (Procs 16) GFlops/core 5.734121 (cores 96)
+	 Layer 9 (type Conv)
+		 CG  Computation time 0.430100 (im2col = 0.267711) | GFlops 550.476847 (Procs 16) GFlops/core 5.734134 (cores 96)| Communication time Reduce 0.000307 (Procs 16)| Bcast 0.058036 (Procs 16)
+		 WU  Computation time 0.429967 (im2col = 0.267733) | GFlops 550.647172 (Procs 16) GFlops/core 5.735908 (cores 96)
+	 Layer 8 (type Conv)
+		 CG  Computation time 0.430225 (im2col = 0.267790) | GFlops 550.316996 (Procs 16) GFlops/core 5.732469 (cores 96)| Communication time Reduce 0.001454 (Procs 16)| Bcast 0.142630 (Procs 16)
+		 WU  Computation time 0.430082 (im2col = 0.267639) | GFlops 550.499734 (Procs 16) GFlops/core 5.734372 (cores 96)
+	 Layer 7 (type Conv)
+		 CG  Computation time 0.376221 (im2col = 0.267729) | GFlops 157.327813 (Procs 16) GFlops/core 1.638831 (cores 96)| Communication time Reduce 0.001432 (Procs 16)| Bcast 0.115720 (Procs 16)
+		 WU  Computation time 0.730534 (im2col = 0.516574) | GFlops 324.091757 (Procs 16) GFlops/core 3.375956 (cores 96)
+	 Layer 6 (type Conv)
+		 CG  Computation time 0.729782 (im2col = 0.516789) | GFlops 324.425809 (Procs 16) GFlops/core 3.379436 (cores 96)| Communication time Reduce 0.001089 (Procs 16)| Bcast 0.115671 (Procs 16)
+		 WU  Computation time 0.729969 (im2col = 0.516413) | GFlops 324.342629 (Procs 16) GFlops/core 3.378569 (cores 96)
+	 Layer 5 (type Conv)
+		 CG  Computation time 0.730435 (im2col = 0.516571) | GFlops 324.135763 (Procs 16) GFlops/core 3.376414 (cores 96)| Communication time Reduce 0.004808 (Procs 16)| Bcast 0.280545 (Procs 16)
+		 WU  Computation time 0.745458 (im2col = 0.531517) | GFlops 317.603449 (Procs 16) GFlops/core 3.308369 (cores 96)
+	 Layer 4 (type Conv)
+		 CG  Computation time 1.515165 (im2col = 0.526278) | GFlops 39.065062 (Procs 16) GFlops/core 0.406928 (cores 96)| Communication time Reduce 0.004689 (Procs 16)| Bcast 0.231119 (Procs 16)
+		 WU  Computation time 2.977458 (im2col = 1.042706) | GFlops 79.517519 (Procs 16) GFlops/core 0.828307 (cores 96)
+	 Layer 3 (type Conv)
+		 CG  Computation time 2.997135 (im2col = 1.048109) | GFlops 78.995467 (Procs 16) GFlops/core 0.822869 (cores 96)| Communication time Reduce 0.019860 (Procs 16)| Bcast 0.595270 (Procs 16)
+		 WU  Computation time 2.895697 (im2col = 1.058101) | GFlops 81.762727 (Procs 16) GFlops/core 0.851695 (cores 96)
+	 Layer 2 (type Conv)
+		 CG  Computation time 2.882188 (im2col = 1.041631) | GFlops 20.536487 (Procs 16) GFlops/core 0.427843 (cores 96)| Communication time Reduce 0.019005 (Procs 16)| Bcast 0.443461 (Procs 8)
+		 WU  Computation time 6.288397 (im2col = 2.091472) | GFlops 38.665549 (Procs 8) GFlops/core 0.805532 (cores 48)
+	 Layer 1 (type Conv)
+		 CG  Computation time 6.287429 (im2col = 2.091245) | GFlops 38.671502 (Procs 8) GFlops/core 0.805656 (cores 48)| Communication time Reduce 0.028661 (Procs 8)| Bcast 0.000000 (Procs 8)
+		 WU  Computation time 6.285959 (im2col = 2.087855) | GFlops 38.680546 (Procs 8) GFlops/core 0.805845 (cores 48)
+STEP 1
+Time 67.347190
+	 Initial Bcast 0.022783
+	 **** FP ****
+	 Layer 1 (type Conv)
+		 FP Computation time 6.288233 (im2col = 2.089045) | GFlops 38.666558 (Procs 8) GFlops/core 0.805553 (cores 48)  Communication time Gather 0.257354 (Procs 8)| Bcast 0.499000 (Procs 8)
+	 Layer 2 (type Conv)
+		 FP Computation time 6.327493 (im2col = 2.090355) | GFlops 38.426645 (Procs 8) GFlops/core 0.800555 (cores 48)  Communication time Gather 0.257389 (Procs 8)| Bcast 0.533677 (Procs 16)
+	 Layer 3 (type Conv)
+		 FP Computation time 2.983815 (im2col = 1.042433) | GFlops 79.348108 (Procs 16) GFlops/core 0.826543 (cores 96)  Communication time Gather 0.126327 (Procs 16)| Bcast 0.262899 (Procs 16)
+	 Layer 4 (type Conv)
+		 FP Computation time 2.984257 (im2col = 1.042006) | GFlops 79.336349 (Procs 16) GFlops/core 0.826420 (cores 96)  Communication time Gather 0.131851 (Procs 16)| Bcast 0.263752 (Procs 16)
+	 Layer 5 (type Conv)
+		 FP Computation time 0.730444 (im2col = 0.517371) | GFlops 324.131637 (Procs 16) GFlops/core 3.376371 (cores 96)  Communication time Gather 0.079436 (Procs 16)| Bcast 0.132121 (Procs 16)
+	 Layer 6 (type Conv)
+		 FP Computation time 0.730639 (im2col = 0.516419) | GFlops 324.045224 (Procs 16) GFlops/core 3.375471 (cores 96)  Communication time Gather 0.082180 (Procs 16)| Bcast 0.132097 (Procs 16)
+	 Layer 7 (type Conv)
+		 FP Computation time 0.729827 (im2col = 0.516429) | GFlops 324.405672 (Procs 16) GFlops/core 3.379226 (cores 96)  Communication time Gather 0.080962 (Procs 16)| Bcast 0.132211 (Procs 16)
+	 Layer 8 (type Conv)
+		 FP Computation time 0.432600 (im2col = 0.267552) | GFlops 547.295563 (Procs 16) GFlops/core 5.700995 (cores 96)  Communication time Gather 0.035923 (Procs 16)| Bcast 0.065292 (Procs 16)
+	 Layer 9 (type Conv)
+		 FP Computation time 0.430450 (im2col = 0.267628) | GFlops 550.029255 (Procs 16) GFlops/core 5.729471 (cores 96)  Communication time Gather 0.035717 (Procs 16)| Bcast 0.065316 (Procs 16)
+	 Layer 10 (type Conv)
+		 FP Computation time 0.430615 (im2col = 0.267713) | GFlops 549.818517 (Procs 16) GFlops/core 5.727276 (cores 96)  Communication time Gather 0.035731 (Procs 16)| Bcast 0.065281 (Procs 16)
+	 Layer 11 (type Conv)
+		 FP Computation time 0.108151 (im2col = 0.068876) | GFlops 547.290737 (Procs 16) GFlops/core 5.700945 (cores 96)  Communication time Gather 0.008923 (Procs 16)| Bcast 0.021775 (Procs 16)
+	 Layer 12 (type Conv)
+		 FP Computation time 0.108141 (im2col = 0.068886) | GFlops 547.341415 (Procs 16) GFlops/core 5.701473 (cores 96)  Communication time Gather 0.008826 (Procs 16)| Bcast 0.021609 (Procs 16)
+	 Layer 13 (type Conv)
+		 FP Computation time 0.108540 (im2col = 0.068881) | GFlops 545.329983 (Procs 16) GFlops/core 5.680521 (cores 96)  Communication time Gather 0.008857 (Procs 16)| Bcast 0.014857 (Procs 8)
+	 Layer 14 (type FC)
+		 FP Computation time 0.073041 | GFlops 720.326619 (Procs 8) GFlops/core 15.006805 (cores 48)  Communication time Gather 0.000314 (Procs 8)| Bcast 0.000940 (Procs 8)
+	 Layer 15 (type FC)
+		 FP Computation time 0.002996 | GFlops 716.791282 (Procs 8) GFlops/core 14.933152 (cores 48)  Communication time Gather 0.000318 (Procs 8)| Bcast 0.000248 (Procs 2)
+	 Layer 16 (type FC)
+		 FP Computation time 0.003125 | GFlops 167.942495 (Procs 2) GFlops/core 13.995208 (cores 12)  Communication time Gather 0.000081 (Procs 2)| Bcast 0.000000 (Procs 2)
+	 **** BP ****
+	 Layer 16 (type FC)
+		 CG  Computation time 0.000000 | GFlops 0.000000 (Procs 2) GFlops/core 0.000000 (cores 12)| Communication time Reduce 0.000101 (Procs 2)| Bcast 0.000209 (Procs 2)
+		 WU  Computation time 0.003066 | GFlops 171.181451 (Procs 2) GFlops/core 14.265121 (cores 12)
+	 Layer 15 (type FC)
+		 CG  Computation time 0.003008 | GFlops 174.478621 (Procs 2) GFlops/core 14.539885 (cores 12)| Communication time Reduce 0.000362 (Procs 2)| Bcast 0.000801 (Procs 8)
+		 WU  Computation time 0.003305 | GFlops 649.776313 (Procs 8) GFlops/core 13.537007 (cores 48)
+	 Layer 14 (type FC)
+		 CG  Computation time 0.003349 | GFlops 641.264364 (Procs 8) GFlops/core 13.359674 (cores 48)| Communication time Reduce 0.000191 (Procs 8)| Bcast 0.000815 (Procs 8)
+		 WU  Computation time 0.077360 | GFlops 680.111263 (Procs 8) GFlops/core 14.168985 (cores 48)
+	 Layer 13 (type Conv)
+		 CG  Computation time 0.108853 (im2col = 0.068820) | GFlops 543.760509 (Procs 8) GFlops/core 5.664172 (cores 48)| Communication time Reduce 0.000139 (Procs 8)| Bcast 0.021161 (Procs 16)
+		 WU  Computation time 0.108541 (im2col = 0.068816) | GFlops 545.323994 (Procs 16) GFlops/core 5.680458 (cores 96)
+	 Layer 12 (type Conv)
+		 CG  Computation time 0.108515 (im2col = 0.068864) | GFlops 545.454590 (Procs 16) GFlops/core 5.681819 (cores 96)| Communication time Reduce 0.000134 (Procs 16)| Bcast 0.021288 (Procs 16)
+		 WU  Computation time 0.108468 (im2col = 0.068771) | GFlops 545.690781 (Procs 16) GFlops/core 5.684279 (cores 96)
+	 Layer 11 (type Conv)
+		 CG  Computation time 0.108451 (im2col = 0.068743) | GFlops 545.775956 (Procs 16) GFlops/core 5.685166 (cores 96)| Communication time Reduce 0.000327 (Procs 16)| Bcast 0.058068 (Procs 16)
+		 WU  Computation time 0.108166 (im2col = 0.068797) | GFlops 547.214738 (Procs 16) GFlops/core 5.700154 (cores 96)
+	 Layer 10 (type Conv)
+		 CG  Computation time 0.108162 (im2col = 0.068896) | GFlops 547.235243 (Procs 16) GFlops/core 5.700367 (cores 96)| Communication time Reduce 0.000336 (Procs 16)| Bcast 0.058043 (Procs 16)
+		 WU  Computation time 0.430491 (im2col = 0.267669) | GFlops 549.976860 (Procs 16) GFlops/core 5.728926 (cores 96)
+	 Layer 9 (type Conv)
+		 CG  Computation time 0.435690 (im2col = 0.267723) | GFlops 543.413856 (Procs 16) GFlops/core 5.660561 (cores 96)| Communication time Reduce 0.000332 (Procs 16)| Bcast 0.058056 (Procs 16)
+		 WU  Computation time 0.435358 (im2col = 0.267609) | GFlops 543.828404 (Procs 16) GFlops/core 5.664879 (cores 96)
+	 Layer 8 (type Conv)
+		 CG  Computation time 0.435296 (im2col = 0.267589) | GFlops 543.905849 (Procs 16) GFlops/core 5.665686 (cores 96)| Communication time Reduce 0.001133 (Procs 16)| Bcast 0.115692 (Procs 16)
+		 WU  Computation time 0.435273 (im2col = 0.267467) | GFlops 543.934449 (Procs 16) GFlops/core 5.665984 (cores 96)
+	 Layer 7 (type Conv)
+		 CG  Computation time 0.379937 (im2col = 0.267620) | GFlops 155.788963 (Procs 16) GFlops/core 1.622802 (cores 96)| Communication time Reduce 0.001123 (Procs 16)| Bcast 0.115677 (Procs 16)
+		 WU  Computation time 0.731715 (im2col = 0.516379) | GFlops 323.568717 (Procs 16) GFlops/core 3.370507 (cores 96)
+	 Layer 6 (type Conv)
+		 CG  Computation time 0.730205 (im2col = 0.517408) | GFlops 324.237893 (Procs 16) GFlops/core 3.377478 (cores 96)| Communication time Reduce 0.001110 (Procs 16)| Bcast 0.115701 (Procs 16)
+		 WU  Computation time 0.730614 (im2col = 0.516868) | GFlops 324.056327 (Procs 16) GFlops/core 3.375587 (cores 96)
+	 Layer 5 (type Conv)
+		 CG  Computation time 0.730245 (im2col = 0.517352) | GFlops 324.220002 (Procs 16) GFlops/core 3.377292 (cores 96)| Communication time Reduce 0.004616 (Procs 16)| Bcast 0.231001 (Procs 16)
+		 WU  Computation time 0.734718 (im2col = 0.520444) | GFlops 322.246252 (Procs 16) GFlops/core 3.356732 (cores 96)
+	 Layer 4 (type Conv)
+		 CG  Computation time 1.505722 (im2col = 0.516462) | GFlops 39.310062 (Procs 16) GFlops/core 0.409480 (cores 96)| Communication time Reduce 0.004624 (Procs 16)| Bcast 0.231100 (Procs 16)
+		 WU  Computation time 3.005679 (im2col = 1.070492) | GFlops 78.770914 (Procs 16) GFlops/core 0.820530 (cores 96)
+	 Layer 3 (type Conv)
+		 CG  Computation time 2.978211 (im2col = 1.041827) | GFlops 79.497416 (Procs 16) GFlops/core 0.828098 (cores 96)| Communication time Reduce 0.020108 (Procs 16)| Bcast 0.444132 (Procs 16)
+		 WU  Computation time 2.981638 (im2col = 1.043080) | GFlops 79.406043 (Procs 16) GFlops/core 0.827146 (cores 96)
+	 Layer 2 (type Conv)
+		 CG  Computation time 2.978788 (im2col = 1.041707) | GFlops 19.870504 (Procs 16) GFlops/core 0.413969 (cores 96)| Communication time Reduce 0.019344 (Procs 16)| Bcast 0.443544 (Procs 8)
+		 WU  Computation time 6.327174 (im2col = 2.089193) | GFlops 38.428581 (Procs 8) GFlops/core 0.800595 (cores 48)
+	 Layer 1 (type Conv)
+		 CG  Computation time 6.329429 (im2col = 2.097202) | GFlops 38.414890 (Procs 8) GFlops/core 0.800310 (cores 48)| Communication time Reduce 0.033527 (Procs 8)| Bcast 0.000000 (Procs 8)
+		 WU  Computation time 6.323916 (im2col = 2.089261) | GFlops 38.448381 (Procs 8) GFlops/core 0.801008 (cores 48)
+STEP 2
+Time 67.376309
+	 Initial Bcast 0.022816
+	 **** FP ****
+	 Layer 1 (type Conv)
+		 FP Computation time 6.325144 (im2col = 2.090407) | GFlops 38.440915 (Procs 8) GFlops/core 0.800852 (cores 48)  Communication time Gather 0.278881 (Procs 8)| Bcast 0.499736 (Procs 8)
+	 Layer 2 (type Conv)
+		 FP Computation time 6.327395 (im2col = 2.090021) | GFlops 38.427240 (Procs 8) GFlops/core 0.800568 (cores 48)  Communication time Gather 0.278854 (Procs 8)| Bcast 0.534201 (Procs 16)
+	 Layer 3 (type Conv)
+		 FP Computation time 2.984647 (im2col = 1.041971) | GFlops 79.325987 (Procs 16) GFlops/core 0.826312 (cores 96)  Communication time Gather 0.147914 (Procs 16)| Bcast 0.263305 (Procs 16)
+	 Layer 4 (type Conv)
+		 FP Computation time 2.983808 (im2col = 1.041984) | GFlops 79.348292 (Procs 16) GFlops/core 0.826545 (cores 96)  Communication time Gather 0.143446 (Procs 16)| Bcast 0.263487 (Procs 16)
+	 Layer 5 (type Conv)
+		 FP Computation time 0.731863 (im2col = 0.516439) | GFlops 323.503258 (Procs 16) GFlops/core 3.369826 (cores 96)  Communication time Gather 0.080552 (Procs 16)| Bcast 0.132101 (Procs 16)
+	 Layer 6 (type Conv)
+		 FP Computation time 0.732228 (im2col = 0.516850) | GFlops 323.341991 (Procs 16) GFlops/core 3.368146 (cores 96)  Communication time Gather 0.082182 (Procs 16)| Bcast 0.132149 (Procs 16)
+	 Layer 7 (type Conv)
+		 FP Computation time 0.731516 (im2col = 0.516131) | GFlops 323.656775 (Procs 16) GFlops/core 3.371425 (cores 96)  Communication time Gather 0.082340 (Procs 16)| Bcast 0.132189 (Procs 16)
+	 Layer 8 (type Conv)
+		 FP Computation time 0.430512 (im2col = 0.267507) | GFlops 549.950057 (Procs 16) GFlops/core 5.728646 (cores 96)  Communication time Gather 0.036972 (Procs 16)| Bcast 0.065332 (Procs 16)
+	 Layer 9 (type Conv)
+		 FP Computation time 0.430526 (im2col = 0.267480) | GFlops 549.932088 (Procs 16) GFlops/core 5.728459 (cores 96)  Communication time Gather 0.035893 (Procs 16)| Bcast 0.065297 (Procs 16)
+	 Layer 10 (type Conv)
+		 FP Computation time 0.430376 (im2col = 0.267380) | GFlops 550.124018 (Procs 16) GFlops/core 5.730459 (cores 96)  Communication time Gather 0.035916 (Procs 16)| Bcast 0.065271 (Procs 16)
+	 Layer 11 (type Conv)
+		 FP Computation time 0.108565 (im2col = 0.068811) | GFlops 545.203038 (Procs 16) GFlops/core 5.679198 (cores 96)  Communication time Gather 0.008961 (Procs 16)| Bcast 0.021712 (Procs 16)
+	 Layer 12 (type Conv)
+		 FP Computation time 0.108579 (im2col = 0.068882) | GFlops 545.133603 (Procs 16) GFlops/core 5.678475 (cores 96)  Communication time Gather 0.008915 (Procs 16)| Bcast 0.021775 (Procs 16)
+	 Layer 13 (type Conv)
+		 FP Computation time 0.108700 (im2col = 0.068849) | GFlops 544.526200 (Procs 16) GFlops/core 5.672148 (cores 96)  Communication time Gather 0.008922 (Procs 16)| Bcast 0.014890 (Procs 8)
+	 Layer 14 (type FC)
+		 FP Computation time 0.072003 | GFlops 730.711657 (Procs 8) GFlops/core 15.223160 (cores 48)  Communication time Gather 0.000374 (Procs 8)| Bcast 0.000930 (Procs 8)
+	 Layer 15 (type FC)
+		 FP Computation time 0.002988 | GFlops 718.678629 (Procs 8) GFlops/core 14.972471 (cores 48)  Communication time Gather 0.000328 (Procs 8)| Bcast 0.000250 (Procs 2)
+	 Layer 16 (type FC)
+		 FP Computation time 0.003204 | GFlops 163.793607 (Procs 2) GFlops/core 13.649467 (cores 12)  Communication time Gather 0.000081 (Procs 2)| Bcast 0.000000 (Procs 2)
+	 **** BP ****
+	 Layer 16 (type FC)
+		 CG  Computation time 0.000000 | GFlops 0.000000 (Procs 2) GFlops/core 0.000000 (cores 12)| Communication time Reduce 0.000094 (Procs 2)| Bcast 0.000203 (Procs 2)
+		 WU  Computation time 0.003102 | GFlops 169.181637 (Procs 2) GFlops/core 14.098470 (cores 12)
+	 Layer 15 (type FC)
+		 CG  Computation time 0.003044 | GFlops 172.414998 (Procs 2) GFlops/core 14.367916 (cores 12)| Communication time Reduce 0.000334 (Procs 2)| Bcast 0.000825 (Procs 8)
+		 WU  Computation time 0.003252 | GFlops 660.351852 (Procs 8) GFlops/core 13.757330 (cores 48)
+	 Layer 14 (type FC)
+		 CG  Computation time 0.003327 | GFlops 645.446023 (Procs 8) GFlops/core 13.446792 (cores 48)| Communication time Reduce 0.000209 (Procs 8)| Bcast 0.000861 (Procs 8)
+		 WU  Computation time 0.078721 | GFlops 668.353777 (Procs 8) GFlops/core 13.924037 (cores 48)
+	 Layer 13 (type Conv)
+		 CG  Computation time 0.107334 (im2col = 0.067603) | GFlops 551.455667 (Procs 8) GFlops/core 5.744330 (cores 48)| Communication time Reduce 0.000136 (Procs 8)| Bcast 0.021303 (Procs 16)
+		 WU  Computation time 0.108475 (im2col = 0.068731) | GFlops 545.655999 (Procs 16) GFlops/core 5.683917 (cores 96)
+	 Layer 12 (type Conv)
+		 CG  Computation time 0.108500 (im2col = 0.068676) | GFlops 545.530101 (Procs 16) GFlops/core 5.682605 (cores 96)| Communication time Reduce 0.000134 (Procs 16)| Bcast 0.021424 (Procs 16)
+		 WU  Computation time 0.108603 (im2col = 0.068697) | GFlops 545.012732 (Procs 16) GFlops/core 5.677216 (cores 96)
+	 Layer 11 (type Conv)
+		 CG  Computation time 0.108547 (im2col = 0.068763) | GFlops 545.294049 (Procs 16) GFlops/core 5.680146 (cores 96)| Communication time Reduce 0.000325 (Procs 16)| Bcast 0.058067 (Procs 16)
+		 WU  Computation time 0.108379 (im2col = 0.068595) | GFlops 546.138546 (Procs 16) GFlops/core 5.688943 (cores 96)
+	 Layer 10 (type Conv)
+		 CG  Computation time 0.108702 (im2col = 0.068866) | GFlops 544.515451 (Procs 16) GFlops/core 5.672036 (cores 96)| Communication time Reduce 0.000317 (Procs 16)| Bcast 0.058070 (Procs 16)
+		 WU  Computation time 0.433261 (im2col = 0.267244) | GFlops 546.460417 (Procs 16) GFlops/core 5.692296 (cores 96)
+	 Layer 9 (type Conv)
+		 CG  Computation time 0.433400 (im2col = 0.267438) | GFlops 546.285460 (Procs 16) GFlops/core 5.690474 (cores 96)| Communication time Reduce 0.000321 (Procs 16)| Bcast 0.058039 (Procs 16)
+		 WU  Computation time 0.432911 (im2col = 0.267253) | GFlops 546.902519 (Procs 16) GFlops/core 5.696901 (cores 96)
+	 Layer 8 (type Conv)
+		 CG  Computation time 0.432907 (im2col = 0.267142) | GFlops 546.907338 (Procs 16) GFlops/core 5.696951 (cores 96)| Communication time Reduce 0.001067 (Procs 16)| Bcast 0.115672 (Procs 16)
+		 WU  Computation time 0.435053 (im2col = 0.267178) | GFlops 544.209883 (Procs 16) GFlops/core 5.668853 (cores 96)
+	 Layer 7 (type Conv)
+		 CG  Computation time 0.379522 (im2col = 0.267393) | GFlops 155.959351 (Procs 16) GFlops/core 1.624577 (cores 96)| Communication time Reduce 0.001051 (Procs 16)| Bcast 0.115710 (Procs 16)
+		 WU  Computation time 0.729700 (im2col = 0.516388) | GFlops 324.462167 (Procs 16) GFlops/core 3.379814 (cores 96)
+	 Layer 6 (type Conv)
+		 CG  Computation time 0.730123 (im2col = 0.516809) | GFlops 324.274209 (Procs 16) GFlops/core 3.377856 (cores 96)| Communication time Reduce 0.001088 (Procs 16)| Bcast 0.115715 (Procs 16)
+		 WU  Computation time 0.729653 (im2col = 0.516334) | GFlops 324.483159 (Procs 16) GFlops/core 3.380033 (cores 96)
+	 Layer 5 (type Conv)
+		 CG  Computation time 0.730090 (im2col = 0.516607) | GFlops 324.288822 (Procs 16) GFlops/core 3.378009 (cores 96)| Communication time Reduce 0.004695 (Procs 16)| Bcast 0.230983 (Procs 16)
+		 WU  Computation time 0.734020 (im2col = 0.519648) | GFlops 322.552620 (Procs 16) GFlops/core 3.359923 (cores 96)
+	 Layer 4 (type Conv)
+		 CG  Computation time 1.505303 (im2col = 0.515926) | GFlops 39.321002 (Procs 16) GFlops/core 0.409594 (cores 96)| Communication time Reduce 0.004540 (Procs 16)| Bcast 0.231083 (Procs 16)
+		 WU  Computation time 2.979705 (im2col = 1.043232) | GFlops 79.457552 (Procs 16) GFlops/core 0.827683 (cores 96)
+	 Layer 3 (type Conv)
+		 CG  Computation time 2.979060 (im2col = 1.041488) | GFlops 79.474760 (Procs 16) GFlops/core 0.827862 (cores 96)| Communication time Reduce 0.020579 (Procs 16)| Bcast 0.444048 (Procs 16)
+		 WU  Computation time 2.979968 (im2col = 1.042683) | GFlops 79.450546 (Procs 16) GFlops/core 0.827610 (cores 96)
+	 Layer 2 (type Conv)
+		 CG  Computation time 2.980736 (im2col = 1.041844) | GFlops 19.857518 (Procs 16) GFlops/core 0.413698 (cores 96)| Communication time Reduce 0.019369 (Procs 16)| Bcast 0.443564 (Procs 8)
+		 WU  Computation time 6.283035 (im2col = 2.083953) | GFlops 38.698547 (Procs 8) GFlops/core 0.806220 (cores 48)
+	 Layer 1 (type Conv)
+		 CG  Computation time 6.325528 (im2col = 2.089910) | GFlops 38.438583 (Procs 8) GFlops/core 0.800804 (cores 48)| Communication time Reduce 0.033492 (Procs 8)| Bcast 0.000000 (Procs 8)
+		 WU  Computation time 6.312443 (im2col = 2.076649) | GFlops 38.518261 (Procs 8) GFlops/core 0.802464 (cores 48)
+Time of scatter = 0.508676
+Time per step = 67.916352
