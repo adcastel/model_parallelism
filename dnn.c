@@ -19,7 +19,7 @@
 
 
 /*Threads for the convolution */
-#define CONV_THREADS 6
+#define CONV_THREADS 8
 /* Model features */
 
 #define NUM_STEPS 	30  // Steps of the simulation
@@ -456,7 +456,7 @@ if(rank == 0){
             if (type[ll] == FC){ //FC
 	    	int m = problem_size(nneurons[ll],procs[ll],rank);//nneurons[l]/procs[l];//antes /size
                 int n = BATCH_SIZE;
-	        int k = (type[ll-1] == CONV) ? nneurons[ll-1]*channels[ll-1] : nneurons[ll-1]; //We need to reshape if the previous one was CONV
+	        int k = nneurons[ll-1]; //We need to reshape if the previous one was CONV
                 int lda = m;    
                 int ldb = k;
                 int ldc = nneurons[ll];
@@ -847,7 +847,7 @@ if(rank == 0){
 #endif
     } //steps
 #ifdef TIMER
-//#ifndef SUMMARY
+#ifndef SUMMARY
     if (rank == 0){
         double total_time = 0.0;
         for ( s = 0; s < NUM_STEPS; s++){
@@ -880,7 +880,7 @@ if(rank == 0){
 	printf("Time of scatter = %f\n",scatter_time);
 	printf("Time per step = %f\n",total_time/NUM_STEPS);
     }
-//#else
+#else
 
     if (rank == 0){
         double total_time_fp[NUM_LAYERS], total_time_comp_fp[NUM_LAYERS], total_time_comm_fp[NUM_LAYERS], total_time_bp[NUM_LAYERS], total_time_bp_cg[NUM_LAYERS],total_time_comp_bp_cg[NUM_LAYERS],total_time_comm_bp_cg[NUM_LAYERS], total_time_bp_wu[NUM_LAYERS];
@@ -895,7 +895,7 @@ if(rank == 0){
 		total_time_bp_wu[l] = 0;
 		
         }
-        printf("************FP*********\n");
+        /*printf("************FP*********\n");
         printf("#step");
         for (l=1; l<NUM_LAYERS;l++){
             printf(" layer_%d",l);
@@ -923,7 +923,8 @@ if(rank == 0){
             printf("\n");
         }
             printf("\n");
-        /*for ( s = 1; s < NUM_STEPS; s++){
+*/
+        for ( s = 1; s < NUM_STEPS; s++){
              for (l=1; l<NUM_LAYERS;l++){
 		total_time_fp[l] += fp_comp_timer[s][l] + fp_comm_timer_red[s][l] + fp_comm_timer_bcast[s][l];
 		total_time_comp_fp[l] += fp_comp_timer[s][l];
@@ -934,15 +935,15 @@ if(rank == 0){
 		total_time_bp_wu[l] += wu_comp_timer[s][l];
 		total_time_bp[l] += total_time_bp_cg[l] + total_time_bp_wu[l];
              }
-        }*/
+        }
         // SUMMARY PARA HUAWEI
-  //     printf("#layer time_fp time_comp_fp time_comm_fp time_bp time_cg time_comp_cg time_comm_cg time_wu\n");
-//	for (l=1; l<NUM_LAYERS;l++){
-//		printf("%d %f %f %f %f %f %f %f %f\n",l,total_time_fp[l]/(NUM_STEPS-1),total_time_comp_fp[l]/(NUM_STEPS-1),total_time_comm_fp[l]/(NUM_STEPS-1), (total_time_bp_cg[l]/(NUM_STEPS-1)) + (total_time_bp_wu[l]/(NUM_STEPS-1)),total_time_bp_cg[l]/(NUM_STEPS-1),total_time_comp_bp_cg[l]/(NUM_STEPS-1),total_time_comm_bp_cg[l]/(NUM_STEPS-1), total_time_bp_wu[l]/(NUM_STEPS-1));//*/total_time_bp[l]/(NUM_STEPS-1));
-       // }
+       printf("#layer time_fp time_comp_fp time_comm_fp time_bp time_cg time_comp_cg time_comm_cg time_wu\n");
+	for (l=1; l<NUM_LAYERS;l++){
+		printf("%d %f %f %f %f %f %f %f %f\n",l,total_time_fp[l]/(NUM_STEPS-1),total_time_comp_fp[l]/(NUM_STEPS-1),total_time_comm_fp[l]/(NUM_STEPS-1), (total_time_bp_cg[l]/(NUM_STEPS-1)) + (total_time_bp_wu[l]/(NUM_STEPS-1)),total_time_bp_cg[l]/(NUM_STEPS-1),total_time_comp_bp_cg[l]/(NUM_STEPS-1),total_time_comm_bp_cg[l]/(NUM_STEPS-1), total_time_bp_wu[l]/(NUM_STEPS-1));//*/total_time_bp[l]/(NUM_STEPS-1));
+        }
 
     }
-//#endif
+#endif
 #endif    
     } //if(rank<max_procs)
 
