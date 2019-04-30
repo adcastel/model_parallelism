@@ -19,7 +19,7 @@
 
 
 /*Threads for the convolution */
-#define CONV_THREADS 8
+#define CONV_THREADS 6
 /* Model features */
 
 #define NUM_STEPS  30  // Steps of the simulation
@@ -247,7 +247,28 @@ int main(int argc, char * argv []) {
     float * conv_i = malloc(max_i * sizeof (float));
     float * conv_ip = malloc(max_ip * sizeof (float));
     float * conv_o = malloc(max_o * sizeof (float));
-    float * conv_f = malloc(max_f * sizeof (float));
+    float * conv_f = malloc(max_f * sizeof (float)); 
+/*
+    size_t mC=channels[0], mB=BATCH_SIZE, mH = image_size[0], 
+	mW = image_size[0], mKW = kwidth[0], mKH = kheight[0] ,mK = nkernels[0];
+
+
+    for (l = 0; l < NUM_LAYERS; l++) {
+        if(channels[l] > mC) mC = channels[l];
+        if(image_size[l] > mH) mH = image_size[l];
+        if(image_size[l] > mW) mW = image_size[l];
+        if(kheight[l] > mKH) mKH = kheight[l];
+        if(kwidth[l] > mKW) mKW = kwidth[l];
+        if(nkernels[l] > mK) mK = nkernels[l];
+    }
+    float * conv_i = malloc(mC * mB * mH * mW  * mKH * mKW * mK * sizeof (float));
+    float * conv_ip = malloc(mC * mB * mH * mW  * mKH * mKW * mK * sizeof (float));
+    float * conv_o= malloc(mC * mB * mH * mW * mKH * mKW * mK * sizeof (float));
+    float * conv_f = malloc(mC * mB * mH * mW  * mKH * mKW * mK * sizeof (float));
+    /float * conv_ip = malloc(mC * mKW * mKH * mB * mW * mH * sizeof (float));
+    //float * conv_o = malloc(mK * mB * mH * mW * sizeof (float));
+    //float * conv_f = malloc(mK * mC + mKH * mKW * sizeof (float)); 
+*/
     /* The maximum size of the matrix model fits with the one of the matrix */
     size_t model_size = (max_size_fc > max_size_conv) ? max_size_fc : max_size_conv; //This is the maximum size of the model layers
     float * model = malloc(model_size * sizeof (float));
@@ -525,7 +546,7 @@ int main(int argc, char * argv []) {
                     MPI_Reduce(&fp_im2col_timer[s][ll], &fp_im2col_timer[s][l], 1, MPI_DOUBLE, MPI_MAX, 0, communicators[ll]);
                     int m = nkernels[ll];
                     int n = b * h * w;
-                    int k = c * kh * kc;
+                    int k = c * kh * kw;
                     fp_comp_gflops[s][ll] = (2.0 * m * n * k / fp_comp_timer[s][ll]) / (1.0e+9);
                     fp_comp_gflops_per_thread[s][ll] = fp_comp_gflops[s][ll] / (1.0 * OMP_NUM_THREADS * procs[ll]);
 #endif
@@ -731,8 +752,10 @@ int main(int argc, char * argv []) {
                         int b = BATCH_SIZE;
                         int h = image_size[l-1];
                         int w = image_size[l-1];
-                        int kh = image_size[l];
-                        int kw = image_size[l];
+                        //int kh = image_size[l];
+                        //int kw = image_size[l];
+                        int kh = kheight[l];
+                        int kw = kwidth[l];
                         int c = channels[l-1];
 #ifdef TIMER
                         wu_comp_timer[s][l] = MPI_Wtime();
@@ -804,7 +827,7 @@ int main(int argc, char * argv []) {
 #endif           
                     //We swap input and output
                     CONV_cg(num_kernels, b, h, w, kh, kw, c, 
-                            conv_i, conv_ip, conv_o, conv_f, 
+                          conv_i, conv_ip, conv_o, conv_f, 
                             &cg_im2col_timer[s][fl]);
 
 #ifdef TIMER
@@ -854,8 +877,10 @@ int main(int argc, char * argv []) {
                     int b = BATCH_SIZE;
                     int h = image_size[fl-1];
                     int w = image_size[fl-1];
-                    int kh = image_size[l];
-                    int kw = image_size[l];
+                    //int kh = image_size[fl];
+                    //int kw = image_size[fl];
+                    int kh = kheight[fl];
+                    int kw = kwidth[fl];
                     int c = channels[fl-1];
 #ifdef TIMER
                     wu_comp_timer[s][fl] = MPI_Wtime();
@@ -1208,40 +1233,46 @@ void CONV_wu(int K, int B, int H, int W, int KH, int KW, int C, float * I, float
     *time = MPI_Wtime();
 #endif
     // Im2col: I -> IP
-//    int kk1 = KH * KW * B * H*W;
-//    int kk2 = KW * B * H*W;
-//    int kk3 = B * H*W;
-//    int kk4 = H*W;
-//    int kk5 = B * (H + KH)*(W + KW);
-//    int kk6 = (H + KH)*(W + KW);
-//    int kk7 = (W + KW);
-//    int jk1, ik1, ik2, jk2, jk3, jk4, ik3, ik4, ik5;
-//
-//#pragma omp parallel for num_threads(CONV_THREADS) private(b,h,w,kh,kw,ik1,ik2,ik3,ik4,ik5,jk1,jk2,jk3,jk4)
-//    for (c = 0; c < C; c++) {
-//        ik1 = c*kk1;
-//        jk1 = c*kk5;
-//        for (b = 0; b < B; b++) {
-//            ik2 = ik1 + b*kk4;
-//            jk2 = jk1 + b*kk6;
-//            for (kh = /*-KH/2*/0; kh < KH/*/2*/; kh++) {
-//                ik3 = ik2 + kh*kk2;
-//                jk3 = jk2 + (h + kh) * kk7;
-//                for (kw = /*-KW/2*/0; kw < KW/*/2*/; kw++) {
-//                    ik4 = ik3 + kw * kk3;
-//                    jk4 = jk3 + kw;
-//                    for (h = 0; h < H; h++) {
-//                        ik5 = ik4 + h*W;
-//                        for (w = 0; w < W; w++)
-//                            IP[ ik5 + w ] = I[ jk4 + w ];
-//                    }
-//                }
-//            }
-//        }
-//    }
+    /* int kk1 = KH * KW * B * H*W;
+    int kk2 = KW * B * H*W;
+    int kk3 = B * H*W;
+    int kk4 = H*W;
+    int kk5 = B * (H + KH)*(W + KW);
+    int kk6 = (H + KH)*(W + KW);
+    int kk7 = (W + KW);
+    int jk1, ik1, ik2, jk2, jk3, jk4, ik3, ik4, ik5;
+
+#pragma omp parallel for num_threads(CONV_THREADS) private(b,h,w,kh,kw,ik1,ik2,ik3,ik4,ik5,jk1,jk2,jk3,jk4)
+    for (c = 0; c < C; c++) {
+        ik1 = c*kk1;
+        jk1 = c*kk5;
+        for (b = 0; b < B; b++) {
+            ik2 = ik1 + b*kk4;
+            jk2 = jk1 + b*kk6;
+            for (kh = 0; kh < KH; kh++) {
+                ik3 = ik2 + kh*kk2;
+                jk3 = jk2 + (h + kh) * kk7;
+                for (kw = 0; kw < KW; kw++) {
+                    ik4 = ik3 + kw * kk3;
+                    jk4 = jk3 + kw;
+                    for (h = 0; h < H; h++) {
+                        ik5 = ik4 + h*W;
+                        for (w = 0; w < W; w++)
+                            IP[ ik5 + w ] = I[ jk4 + w ];
+                    }
+                }
+            }
+        }
+    }*/
+
+    /*float * wu_i = (float *) malloc(C*B*H*W*sizeof(float));
+    float * wu_ip = (float *) malloc(C*KW*KH*B*H*W*sizeof(float));
+    float * wu_o = (float *) malloc(K*B*H*W*sizeof(float));
+    float * wu_f = (float *) malloc(K*C*KH*KW*sizeof(float));
+*/
 #ifdef TIMER
     //  printf("WU GB/s = %f\n",C*B*H*W*KH*KW*2.0*4.0/1000000000.0);
-    *time = MPI_Wtime() - *time;
+    *time = 0;//MPI_Wtime() - *time;
 #endif
     // Gemm
     int m = K;
@@ -1254,6 +1285,10 @@ void CONV_wu(int K, int B, int H, int W, int KH, int KW, int C, float * I, float
     cblas_sgemm(CblasColMajor, CblasNoTrans, CblasNoTrans,
             m, n, k, 1,
             F, lda, IP, ldb, 0, O, ldc);
+   /*free(wu_i);
+   free(wu_ip);
+   free(wu_f);
+   free(wu_o);*/
 }
 
 void allgather(int n, float * C, MPI_Comm comm) {
