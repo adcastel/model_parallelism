@@ -117,7 +117,7 @@ int main(int argc, char * argv []) {
     int type[NUM_LAYERS] = {INPUT, CONV, CONV, CONV, CONV, CONV, CONV, CONV, 
                             CONV, CONV, CONV, CONV, CONV, CONV, FC, FC, FC};
     //Neurons per layer
-    int nneurons[NUM_LAYERS] = {227 * 227 * 3, 227 * 227 * 64, 227 * 227 * 64, 
+    int nneurons[NUM_LAYERS] = {224 * 224 * 3, 224 * 224 * 64, 224 * 224 * 64, 
                                 112 * 112 * 128, 112 * 112 * 128, 56 * 56 * 256,
                                 56 * 56 * 256, 56 * 56 * 256, 28 * 28 * 512, 
                                 28 * 28 * 512, 28 * 28 * 512, 14 * 14 * 512, 
@@ -129,7 +129,7 @@ int main(int argc, char * argv []) {
     int min_size[NUM_LAYERS] = {0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
                                 1, 1, 1, 1, 1}; //minimum data size per layer
 #endif    
-    int image_size[NUM_LAYERS] = {227, 227, 227, 112, 112, 56, 56, 56, 28, 28, 
+    int image_size[NUM_LAYERS] = {224, 224, 224, 112, 112, 56, 56, 56, 28, 28, 
                                             28, 14, 14, 14, 0, 0, 0}; //pixels
     int nkernels[NUM_LAYERS] = {0, 64, 64, 128, 128, 256, 256, 256, 512, 512, 
                             512, 512, 512, 512, 0, 0, 0}; //kernels per layer
@@ -435,7 +435,7 @@ int main(int argc, char * argv []) {
                             //START_TIMER_FP(fp_comp_timer,s,l)
                             fp_comp_timer[s][l] = MPI_Wtime();
 #endif
-
+			    //printf("CONV_fp(%d,%d,%d,%d,%d,%d,%d)\n",num_kernels, b, h, w, kh, kw, c);
                             CONV_fp(l, num_kernels, b, h, w, kh, kw, c,
                                     conv_i, conv_ip, conv_o, conv_f, &fp_im2col_timer[s][l]);
 
@@ -629,7 +629,8 @@ int main(int argc, char * argv []) {
             for (l = NUM_LAYERS - 2; l >= 2; l--) {
                 //printf("CG layer %d\n",l);
                 //CG
-                if (type[l] == FC) { //FC
+                //if (type[l] == FC) { //FC
+                if ( type[l] == FC || (type[l] == CONV && type[l+1] == FC)) {
                     if (rank < procs[l] || rank < procs[l + 1]) {
                         if (rank < procs[l + 1]) {
                             int m = nneurons[l];
@@ -752,8 +753,8 @@ int main(int argc, char * argv []) {
                         int b = BATCH_SIZE;
                         int h = image_size[l-1];
                         int w = image_size[l-1];
-                        //int kh = image_size[l];
-                        //int kw = image_size[l];
+                        //int kh= image_size[l];
+                        //int kw= image_size[l];
                         int kh = kheight[l];
                         int kw = kwidth[l];
                         int c = channels[l-1];
@@ -877,11 +878,12 @@ int main(int argc, char * argv []) {
                     int b = BATCH_SIZE;
                     int h = image_size[fl-1];
                     int w = image_size[fl-1];
-                    //int kh = image_size[fl];
-                    //int kw = image_size[fl];
-                    int kh = kheight[fl];
-                    int kw = kwidth[fl];
+                    //int kh= image_size[fl];
+                    //int kw= image_size[fl];
+                    int kh = kheight[l];
+                    int kw = kwidth[l];
                     int c = channels[fl-1];
+	//	printf("CONV_wu fl(%d) b(%d) h(%d) w(%d) kh(%d) kw(%d) c(%d)\n", fl, b, h, w, kh, kw, c);
 #ifdef TIMER
                     wu_comp_timer[s][fl] = MPI_Wtime();
 #endif
@@ -909,7 +911,7 @@ int main(int argc, char * argv []) {
 #endif
         } //steps
 #ifdef TIMER
-//#ifndef SUMMARY
+#ifndef SUMMARY
         if (rank == 0) {
             double total_time = 0.0;
             for (s = 0; s < NUM_STEPS; s++) {
@@ -942,10 +944,10 @@ int main(int argc, char * argv []) {
             printf("Time of scatter = %f\n", scatter_time);
             printf("Time per step = %f\n", total_time / NUM_STEPS);
         }
-//#else
+#else
 
         if (rank == 0) {
-            double total_time_fp[NUM_LAYERS], total_time_comp_fp[NUM_LAYERS], 
+            double  total_time[NUM_LAYERS], total_time_fp[NUM_LAYERS], total_time_comp_fp[NUM_LAYERS], 
                     total_time_comm_fp[NUM_LAYERS], total_time_bp[NUM_LAYERS], 
                     total_time_bp_cg[NUM_LAYERS], 
                     total_time_comp_bp_cg[NUM_LAYERS], 
@@ -953,6 +955,7 @@ int main(int argc, char * argv []) {
                     total_time_bp_wu[NUM_LAYERS];
             
             for (l = 1; l < NUM_LAYERS; l++) {
+                total_time[l] = 0;
                 total_time_fp[l] = 0;
                 total_time_comp_fp[l] = 0;
                 total_time_comm_fp[l] = 0;
@@ -963,9 +966,14 @@ int main(int argc, char * argv []) {
                 total_time_bp_wu[l] = 0;
 
             }
-            printf("************FP*********\n");
+           // printf("************FP*********\n");
+           // SUMMARY MANEL
+           /*
             printf("#step");
             for (l=1; l<NUM_LAYERS;l++){
+                printf(" layer_%d",l);
+            }
+            for (l=NUM_LAYERS-1; l>=1;l--){
                 printf(" layer_%d",l);
             }
             printf("\n");
@@ -974,12 +982,16 @@ int main(int argc, char * argv []) {
                  for (l=1; l<NUM_LAYERS;l++){
                      printf(" %f",fp_comp_timer[s][l] + fp_comm_timer_red[s][l] + fp_comm_timer_bcast[s][l]);
                  }
-                printf("\n");
+                 for (l=NUM_LAYERS-1; l>=1;l--){
+                     printf(" %f", cg_comp_timer[s][l] + cg_comm_timer_red[s][l] + cg_comm_timer_bcast[s][l]+wu_comp_timer[s][l]);
+                 }
+                 printf("\n");
             }
+            
             printf("\n");
             printf("*********BP***********\n");
             printf("#step");
-            for (l=1; l<NUM_LAYERS;l++){
+            for (l=NUM_LAYERS-1; l<=1;l++){
                 printf(" layer_%d",l);
             }
             printf("\n");
@@ -991,8 +1003,9 @@ int main(int argc, char * argv []) {
                 printf("\n");
             }
                 printf("\n");
+          */  
             // SUMMARY PARA HUAWEI
-            /*
+            
             for (s = 1; s < NUM_STEPS; s++) {
                 for (l = 1; l < NUM_LAYERS; l++) {
                     total_time_fp[l] += fp_comp_timer[s][l] + fp_comm_timer_red[s][l] + fp_comm_timer_bcast[s][l];
@@ -1003,24 +1016,26 @@ int main(int argc, char * argv []) {
                     total_time_comm_bp_cg[l] += cg_comm_timer_red[s][l] + cg_comm_timer_bcast[s][l];
                     total_time_bp_wu[l] += wu_comp_timer[s][l];
                     total_time_bp[l] += total_time_bp_cg[l] + total_time_bp_wu[l];
+                    total_time[l] += total_time_fp[l] + total_time_bp[l];
                 }
             }
             
-            printf("#layer time_fp time_comp_fp time_comm_fp time_bp time_cg time_comp_cg time_comm_cg time_wu\n");
+            printf("#layer total_time time_fp time_comp_fp time_comm_fp time_bp time_cg time_comp_cg time_comm_cg time_wu\n");
             for (l = 1; l < NUM_LAYERS; l++) {
-                printf("%d %f %f %f %f %f %f %f %f\n", l, 
-             * total_time_fp[l] / (NUM_STEPS - 1), 
-             * total_time_comp_fp[l] / (NUM_STEPS - 1), 
-             * total_time_comm_fp[l] / (NUM_STEPS - 1), 
-             * (total_time_bp_cg[l] / (NUM_STEPS - 1)) + (total_time_bp_wu[l] / (NUM_STEPS - 1)), 
-             * total_time_bp_cg[l] / (NUM_STEPS - 1), 
-             * total_time_comp_bp_cg[l] / (NUM_STEPS - 1), 
-             * total_time_comm_bp_cg[l] / (NUM_STEPS - 1), 
-             * total_time_bp_wu[l] / (NUM_STEPS - 1)); 
-            }*/
+                printf("%d %f %f %f %f %f %f %f %f %f\n", l, 
+              total_time[l] / (NUM_STEPS - 1), 
+              total_time_fp[l] / (NUM_STEPS - 1), 
+              total_time_comp_fp[l] / (NUM_STEPS - 1), 
+              total_time_comm_fp[l] / (NUM_STEPS - 1), 
+              (total_time_bp_cg[l] / (NUM_STEPS - 1)) + (total_time_bp_wu[l] / (NUM_STEPS - 1)), 
+              total_time_bp_cg[l] / (NUM_STEPS - 1), 
+              total_time_comp_bp_cg[l] / (NUM_STEPS - 1), 
+              total_time_comm_bp_cg[l] / (NUM_STEPS - 1), 
+              total_time_bp_wu[l] / (NUM_STEPS - 1)); 
+            }
 
         }
-//#endif
+#endif
 #endif    
     } //if(rank<max_procs)
 
@@ -1040,18 +1055,21 @@ void FC_gemm_fp(int m, int n, int k, float * A, int lda, float * B, int ldb, flo
     cblas_sgemm(CblasColMajor, CblasNoTrans, CblasNoTrans,
             m, n, k, 1,
             A, lda, B, ldb, 0, C, ldc);
+    //printf("FP  FC  GEMM m(%d) : n(%d) : k(%d)\n", m, n, k);
 }
 
 void FC_gemm_cg(int m, int n, int k, float * A, int lda, float * B, int ldb, float * C, int ldc) {
     cblas_sgemm(CblasColMajor, CblasTrans, CblasNoTrans,
             m, n, k, 1,
             A, lda, B, ldb, 0, C, ldc);
+    //printf("GC  FC  GEMM m(%d) : n(%d) : k(%d)\n", m, n, k);
 }
 
 void FC_gemm_wu(int m, int n, int k, float * A, int lda, float * B, int ldb, float * C, int ldc) {
     cblas_sgemm(CblasColMajor, CblasNoTrans, CblasTrans,
             m, n, k, 1,
             A, lda, B, ldb, 0, C, ldc);
+    //printf("WU  FC  GEMM m(%d) : n(%d) : k(%d)\n", m, n, k);
 }
 
 void CONV_fp(int l, int K, int B, int H, int W, int KH, int KW, int C, float * I, float * IP, float * O, float * F, double * time) {
@@ -1145,6 +1163,8 @@ void CONV_fp(int l, int K, int B, int H, int W, int KH, int KW, int C, float * I
             //miF, lda, miIP, ldb,0,miO,ldc);
             F, lda, IP, ldb, 0, O, ldc);
 
+    //printf("FP CONV GEMM m(%d) : n(%d)=b(%d).h(%d).w(%d) : k(%d)=c(%d).kh(%d).kw(%d)\n", m, n, B, H, W, k, C, KH, KW);
+
     /*free(miI);
     free(miIP);
     free(miO);
@@ -1223,6 +1243,8 @@ void CONV_cg(int K, int B, int H, int W, int KH, int KW, int C, float * I, float
     cblas_sgemm(CblasColMajor, CblasNoTrans, CblasNoTrans,
             m, n, k, 1,
             F, lda, IP, ldb, 0, O, ldc);
+
+    //printf("GC CONV GEMM m(%d) : n(%d)=b(%d).h(%d).w(%d) : k(%d)=c(%d).kh(%d).kw(%d)\n", m, n, B, H, W, k, C, KH, KW);
     //	printf("Conv_fp not yet implemented\n");
 }
 
@@ -1285,6 +1307,8 @@ void CONV_wu(int K, int B, int H, int W, int KH, int KW, int C, float * I, float
     cblas_sgemm(CblasColMajor, CblasNoTrans, CblasNoTrans,
             m, n, k, 1,
             F, lda, IP, ldb, 0, O, ldc);
+
+    //printf("WU CONV GEMM m(%d) : n(%d)=b(%d).h(%d).w(%d) : k(%d)=c(%d).kh(%d).kw(%d)\n", m, n, B, H, W, k, C, KH, KW);
    /*free(wu_i);
    free(wu_ip);
    free(wu_f);
