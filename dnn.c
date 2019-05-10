@@ -19,10 +19,10 @@
 
 
 /*Threads for the convolution */
-#define CONV_THREADS 6
+#define CONV_THREADS 8
 /* Model features */
 
-#define NUM_STEPS  30  // Steps of the simulation
+#define NUM_STEPS  15  // Steps of the simulation
 #define BATCH_SIZE  64 // Batch size
 
 #ifdef ALEXNET
@@ -574,7 +574,7 @@ int main(int argc, char * argv []) {
             //printf("CG layer %d\n",NUM_LAYERS-1);
             if (rank < procs[NUM_LAYERS - 1] || rank < procs[NUM_LAYERS - 2]) {
                 if (rank < procs[NUM_LAYERS - 1]) {
-                    int comm_size = (nneurons[NUM_LAYERS - 1] / procs[NUM_LAYERS - 1]) * BATCH_SIZE;
+                    int comm_size = (nneurons[NUM_LAYERS - 1]/* / procs[NUM_LAYERS - 1]*/) * BATCH_SIZE;
 #ifdef TIMER
                     cg_comp_timer[s][NUM_LAYERS - 1] = 0;
                     cg_comp_gflops[s][NUM_LAYERS - 1] = 0;
@@ -653,7 +653,7 @@ int main(int argc, char * argv []) {
 #endif
 
                             //Allreduce = reduce + bcast
-                            int comm_size = (nneurons[l] / procs[l + 1]) * BATCH_SIZE;
+                            int comm_size = (nneurons[l]/* / procs[l + 1]*/) * BATCH_SIZE;
 #ifdef TIMER
                             cg_comm_timer_red[s][l] = MPI_Wtime();
 #endif
@@ -697,13 +697,13 @@ int main(int argc, char * argv []) {
                             MPI_Reduce(&cg_comp_timer[s][l], &cg_comp_timer[s][l], 1, MPI_DOUBLE, MPI_MAX, 0, communicators[l]);
                             MPI_Reduce(&cg_im2col_timer[s][l], &cg_im2col_timer[s][l], 1, MPI_DOUBLE, MPI_MAX, 0, communicators[l]);
                             int m = nkernels[l];
-                           int n = b * h * w;
+                            int n = b * h * w;
                             int k = c * kh * kw;
                             cg_comp_gflops[s][l] = (2.0 * m * n * k / cg_comp_timer[s][l]) / (1.0e+9);
                             cg_comp_gflops_per_thread[s][l] = cg_comp_gflops[s][l] / (1.0 * OMP_NUM_THREADS * procs[l]);
 #endif
 
-                            int comm_size = (nneurons[l]/procs[l]) * BATCH_SIZE;
+                            int comm_size = (nneurons[l-1]/*/procs[l]*/) * BATCH_SIZE;
                             //We fusse the output so we don't need to make multiple reduce    for (int c = 0; c < channels[l-1]; c++){ //We need a reduce for each channel of the previous layer
 #ifdef TIMER
                             cg_comm_timer_red[s][l] = MPI_Wtime();
@@ -715,7 +715,7 @@ int main(int argc, char * argv []) {
                             //	}
                         }
                         if (rank < procs[l - 1]) {
-                            int comm_size = nneurons[l] * BATCH_SIZE;
+                            int comm_size = nneurons[l-1] * BATCH_SIZE;
 #ifdef TIMER
                             cg_comm_timer_bcast[s][l] = MPI_Wtime();
 #endif
@@ -804,7 +804,7 @@ int main(int argc, char * argv []) {
                     cg_comp_gflops_per_thread[s][fl] = cg_comp_gflops[s][fl] / (1.0 * OMP_NUM_THREADS * procs[fl + 1]);
 #endif
 
-                    int comm_size = (nneurons[fl] / procs[fl+1]) * BATCH_SIZE;
+                    int comm_size = (nneurons[fl]/* / procs[fl+1]*/) * BATCH_SIZE;
 #ifdef TIMER
                     cg_comm_timer_red[s][fl] = MPI_Wtime();
 #endif
@@ -841,7 +841,7 @@ int main(int argc, char * argv []) {
                     cg_comp_gflops[s][fl] = (2.0 * m * n * k / cg_comp_timer[s][fl]) / (1.0e+9);
                     cg_comp_gflops_per_thread[s][fl] = cg_comp_gflops[s][fl] / (1.0 * OMP_NUM_THREADS * procs[fl]);
 #endif
-                    int comm_size = nneurons[fl] * BATCH_SIZE;
+                    int comm_size = nneurons[fl-1] * BATCH_SIZE;
 #ifdef TIMER
                     cg_comm_timer_red[s][fl] = MPI_Wtime();
 #endif
@@ -911,7 +911,7 @@ int main(int argc, char * argv []) {
 #endif
         } //steps
 #ifdef TIMER
-#ifndef SUMMARY
+//#ifndef SUMMARY
         if (rank == 0) {
             double total_time = 0.0;
             for (s = 0; s < NUM_STEPS; s++) {
@@ -944,7 +944,7 @@ int main(int argc, char * argv []) {
             printf("Time of scatter = %f\n", scatter_time);
             printf("Time per step = %f\n", total_time / NUM_STEPS);
         }
-#else
+//#else
 
         if (rank == 0) {
             double  total_time[NUM_LAYERS], total_time_fp[NUM_LAYERS], total_time_comp_fp[NUM_LAYERS], 
@@ -1023,7 +1023,7 @@ int main(int argc, char * argv []) {
             printf("#layer total_time time_fp time_comp_fp time_comm_fp time_bp time_cg time_comp_cg time_comm_cg time_wu\n");
             for (l = 1; l < NUM_LAYERS; l++) {
                 printf("%d %f %f %f %f %f %f %f %f %f\n", l, 
-              total_time[l] / (NUM_STEPS - 1), 
+              total_time_fp[l] / (NUM_STEPS - 1) + (total_time_bp_cg[l] / (NUM_STEPS - 1)) + (total_time_bp_wu[l] / (NUM_STEPS - 1)), 
               total_time_fp[l] / (NUM_STEPS - 1), 
               total_time_comp_fp[l] / (NUM_STEPS - 1), 
               total_time_comm_fp[l] / (NUM_STEPS - 1), 
@@ -1035,7 +1035,7 @@ int main(int argc, char * argv []) {
             }
 
         }
-#endif
+//#endif
 #endif    
     } //if(rank<max_procs)
 
