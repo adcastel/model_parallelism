@@ -182,8 +182,6 @@ int main(int argc, char * argv []) {
 
 #endif
 
-    int procs[NUM_LAYERS]; //number of procs that worker per layer
-    int max_procs = 0; //Variable used for the group and communicator creation;
 
     const char* env = getenv("OMP_NUM_THREADS");
     int OMP_NUM_THREADS = (env != NULL) ? atoi(env) : 1;
@@ -281,6 +279,9 @@ int main(int argc, char * argv []) {
 
     /* With the minimum size, we calculate the number of procs that acts in each layer */
     /* Moreover we calculate the max number of processes working in the model */
+    int max_procs = 0; //Variable used for the group and communicator creation;
+#ifndef OPT
+    int procs[NUM_LAYERS]; //number of procs that worker per layer
     for (l = 1; l < NUM_LAYERS; l++) {
         int num_procs;
         if (type[l] == FC) {
@@ -291,7 +292,21 @@ int main(int argc, char * argv []) {
         procs[l] = (num_procs > size) ? size : num_procs;
         if (procs[l] > max_procs) max_procs = procs[l];
     }
+#else
+#ifdef ALEXNET
+    int procs[NUM_LAYERS] = {0,2,26,26,22,22,32,22,24};//number of procs that worker per layer
+    max_procs = 32; //Variable used for the group and communicator creation;
+    
+#elif defined VGG16
+    int procs[NUM_LAYERS] = {0,2,2,2,2,26,26,26,22,22,22,24,24,24,28,28,24};//number of procs that worker per layer
+    max_procs = 28; //Variable used for the group and communicator creation;
+#else
+    printf("Error: OPT is defined but the model does not support it\n");
+#endif
+#endif
     procs[0] = procs[1];
+
+
     /* we now generate a list that will be used in the communication group construction */
     int * ranks = malloc(max_procs * sizeof (int));
     for (i = 0; i < max_procs; i++) {
