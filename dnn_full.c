@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <math.h>
 #include "mpi.h"
 #include "omp.h"
@@ -93,73 +94,73 @@ int count_layers(FILE *fp){
 void read_model(FILE *fp, param_t *p, model_t *m){
 
 
-    /* Model 
-    int type[NUM_LAYERS] = { INPUT, CONV, CONV, CONV, CONV, CONV, FC, FC, FC}; 
-    int nneurons[NUM_LAYERS] = { 227*227*3, 55*55*64, 27*27*192 , 13*13*384, 13*13*384, 13*13*256,4096,4096,1001}; //Neurons per layer
-    int min_size[NUM_LAYERS] = { 0, 16, 16, 16, 16, 16,512,512,512}; //minimum data size per layer
-    int image_size[NUM_LAYERS] = { 227, 55, 27 , 13, 13, 13, 0,0.0}; //pixels
-    int nkernels[NUM_LAYERS] = { 0,  64, 192, 384, 384,256,0,0,0}; //kernels per layer
-    int channels[NUM_LAYERS] = { 3,  64, 192,384,384,256,1, 1, 1}; //channels per layer
-    int kwidth[NUM_LAYERS] = { 0, 11, 5, 3,3,3,0,0,0}; //Sizes of kernels
-    int kheight[NUM_LAYERS] = { 0, 11, 5, 3,3,3,0,0,0}; //Sizes of kernels
-    int vstrides[NUM_LAYERS] = { 0, 4, 1, 1,1,1,0,0,0}; //Stride of kernels
-    int hstrides[NUM_LAYERS] = { 0, 4, 1, 1,1,1,0,0,0}; //Stride of kernels
-    */
-  // int nneurons[num_layers] = { 227*227,  113*113, 56*56, 2048, 1000}; //Neurons per layer
-  // int nkernels[num_layers] = { 0,  64, 128, 0, 0}; //kernels per layer
-  // int channels[num_layers] = { 3,  64, 128, 1, 1}; //channels per layer
-  // int min_size[num_layers] = { 0,  4, 4, 256, 256}; //minimum data size per layer
-  // int kwidth[num_layers] = { 0, 3, 3, 0,0}; //Sizes of kernels
-  // int kheight[num_layers] = { 0, 3, 3, 0,0}; //Sizes of kernels
-  // int vstrides[num_layers] = { 0, 2, 2, 0,0}; //Stride of kernels
-  // int hstrides[num_layers] = { 0, 2, 2, 0,0}; //Stride of kernels
-
-  char line[MAX_LEN];
-  int i= 0;
-
-#ifdef VERBOSE
-  printf(" ID :   TYPE :    NEURS :  IMS :  CHA :  NKE :  KWD :  KHE :  HST :  VST :  MSZ\n");
-#endif
-
-  fgets(line, MAX_LEN, fp);
-  while(fgets(line, MAX_LEN, fp)){
-    char* tmp = strdup(line);
-    const char* typel = getfield(tmp, 2); 
-    m->nneurons[i]  = getfield_int(line, 3) * getfield_int(line, 4) * getfield_int(line, 5); // width * height * channels
-    m->image_size[i]= getfield_int(line, 3);
-    m->channels[i]  = getfield_int(line, 5);
-    m->kwidth[i]    = getfield_int(line, 6);
-    m->kheight[i]   = getfield_int(line, 7);
-    m->hstrides[i]  = getfield_int(line, 8);
-    m->vstrides[i]  = getfield_int(line, 9);
-    m->procs[i]     = getfield_int(line, 10);
-
-    if ( !strcmp(typel, "input") ){ 
-    	m->type[i] = INPUT; m->min_size[i]= 0;           m->nkernels[i]= 0; 
-    }
-    else if ( !strcmp(typel, "fc") ){ 
-    	m->type[i] = FC;    m->min_size[i]= p->minsfc;   m->nkernels[i]= 0; 
-	    m->channels[i]= 1;  m->kwidth[i]= 0;   m->kheight[i]= 0;   m->image_size[i] = 0; 
-	  }
-    else if ( !strcmp(typel, "conv") ){ 
-    	m->type[i] = CONV;  m->min_size[i]= p->minsconv; m->nkernels[i]= m->channels[i];
-    } 
-    else if ( !strcmp(typel, "apool") ){ 
-    	m->type[i] = APOOL; m->min_size[i]= p->minsconv; m->nkernels[i]= 0; 
-    }
-    else if ( !strcmp(typel, "mpool") ){ 
-    	m->type[i] = MPOOL; m->min_size[i]= p->minsconv; m->nkernels[i]= 0; 
-    }
-   
-#ifdef VERBOSE
-    printf("%3d : %6s : %8d : %4d : %4d : %4d : %4d : %4d : %4d : %4d : %4d\n",
-		    i+1, typel, m->nneurons[i], m->image_size[i], m->channels[i], m->nkernels[i],
-		    m->kwidth[i], m->kheight[i], m->hstrides[i], m->vstrides[i], m->min_size[i]);
-#endif
-    free(tmp);
-    i++;
-  }
-  m->num_layers= i;
+//    /* Model 
+//    int type[NUM_LAYERS] = { INPUT, CONV, CONV, CONV, CONV, CONV, FC, FC, FC}; 
+//    int nneurons[NUM_LAYERS] = { 227*227*3, 55*55*64, 27*27*192 , 13*13*384, 13*13*384, 13*13*256,4096,4096,1001}; //Neurons per layer
+//    int min_size[NUM_LAYERS] = { 0, 16, 16, 16, 16, 16,512,512,512}; //minimum data size per layer
+//    int image_size[NUM_LAYERS] = { 227, 55, 27 , 13, 13, 13, 0,0.0}; //pixels
+//    int nkernels[NUM_LAYERS] = { 0,  64, 192, 384, 384,256,0,0,0}; //kernels per layer
+//    int channels[NUM_LAYERS] = { 3,  64, 192,384,384,256,1, 1, 1}; //channels per layer
+//    int kwidth[NUM_LAYERS] = { 0, 11, 5, 3,3,3,0,0,0}; //Sizes of kernels
+//    int kheight[NUM_LAYERS] = { 0, 11, 5, 3,3,3,0,0,0}; //Sizes of kernels
+//    int vstrides[NUM_LAYERS] = { 0, 4, 1, 1,1,1,0,0,0}; //Stride of kernels
+//    int hstrides[NUM_LAYERS] = { 0, 4, 1, 1,1,1,0,0,0}; //Stride of kernels
+//    */
+//  // int nneurons[num_layers] = { 227*227,  113*113, 56*56, 2048, 1000}; //Neurons per layer
+//  // int nkernels[num_layers] = { 0,  64, 128, 0, 0}; //kernels per layer
+//  // int channels[num_layers] = { 3,  64, 128, 1, 1}; //channels per layer
+//  // int min_size[num_layers] = { 0,  4, 4, 256, 256}; //minimum data size per layer
+//  // int kwidth[num_layers] = { 0, 3, 3, 0,0}; //Sizes of kernels
+//  // int kheight[num_layers] = { 0, 3, 3, 0,0}; //Sizes of kernels
+//  // int vstrides[num_layers] = { 0, 2, 2, 0,0}; //Stride of kernels
+//  // int hstrides[num_layers] = { 0, 2, 2, 0,0}; //Stride of kernels
+//
+//  char line[MAX_LEN];
+//  int i= 0;
+//
+//#ifdef VERBOSE
+//  printf(" ID :   TYPE :    NEURS :  IMS :  CHA :  NKE :  KWD :  KHE :  HST :  VST :  MSZ\n");
+//#endif
+//
+//  fgets(line, MAX_LEN, fp);
+//  while(fgets(line, MAX_LEN, fp)){
+//    char* tmp = strdup(line);
+//    const char* typel = getfield(tmp, 2); 
+//    m->nneurons[i]  = getfield_int(line, 3) * getfield_int(line, 4) * getfield_int(line, 5); // width * height * channels
+//    m->image_size[i]= getfield_int(line, 3);
+//    m->channels[i]  = getfield_int(line, 5);
+//    m->kwidth[i]    = getfield_int(line, 6);
+//    m->kheight[i]   = getfield_int(line, 7);
+//    m->hstrides[i]  = getfield_int(line, 8);
+//    m->vstrides[i]  = getfield_int(line, 9);
+//    m->procs[i]     = getfield_int(line, 10);
+//
+//    if ( !strcmp(typel, "input") ){ 
+//    	m->type[i] = INPUT; m->min_size[i]= 0;           m->nkernels[i]= 0; 
+//    }
+//    else if ( !strcmp(typel, "fc") ){ 
+//    	m->type[i] = FC;    m->min_size[i]= p->minsfc;   m->nkernels[i]= 0; 
+//	    m->channels[i]= 1;  m->kwidth[i]= 0;   m->kheight[i]= 0;   m->image_size[i] = 0; 
+//	  }
+//    else if ( !strcmp(typel, "conv") ){ 
+//    	m->type[i] = CONV;  m->min_size[i]= p->minsconv; m->nkernels[i]= m->channels[i];
+//    } 
+//    else if ( !strcmp(typel, "apool") ){ 
+//    	m->type[i] = APOOL; m->min_size[i]= p->minsconv; m->nkernels[i]= 0; 
+//    }
+//    else if ( !strcmp(typel, "mpool") ){ 
+//    	m->type[i] = MPOOL; m->min_size[i]= p->minsconv; m->nkernels[i]= 0; 
+//    }
+//   
+//#ifdef VERBOSE
+//    printf("%3d : %6s : %8d : %4d : %4d : %4d : %4d : %4d : %4d : %4d : %4d\n",
+//		    i+1, typel, m->nneurons[i], m->image_size[i], m->channels[i], m->nkernels[i],
+//		    m->kwidth[i], m->kheight[i], m->hstrides[i], m->vstrides[i], m->min_size[i]);
+//#endif
+//    free(tmp);
+//    i++;
+//  }
+//  m->num_layers= i;
 }
 
 
