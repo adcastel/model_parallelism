@@ -82,12 +82,14 @@ double getfield_double(char* line, int num){
 
 int count_layers(FILE *fp){
   int num_layers= 0;
-  char line[MAX_LEN];
-  fgets(line, MAX_LEN, fp);
-  while(!feof(fp)){
-    if(fgetc(fp) == '\n') num_layers++;
+  while(!feof(fp))
+  {
+    ch = fgetc(fp);
+    if(ch == '\n')
+    {
+      lines++;
+    }
   }
-  rewind(fp);
   return num_layers;
 }
 
@@ -218,7 +220,7 @@ int main(int argc, char * argv []) {
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
     if(rank == 0){
-     FILE *fp_model, *fp_results;
+    FILE *fp_model, *fp_results;
     int aux, j;
     char auxstr[200], auxstr2[200], *token, *str;
     printf("Model: %s\n", argv[1]);
