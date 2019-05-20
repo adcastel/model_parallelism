@@ -91,7 +91,7 @@ int count_layers(FILE *fp){
   return num_layers;
 }
 
-void read_model(FILE *fp, param_t *p, model_t *m){
+//void read_model(FILE *fp, param_t *p, model_t *m){
 
 
 //    /* Model 
@@ -161,7 +161,7 @@ void read_model(FILE *fp, param_t *p, model_t *m){
 //    i++;
 //  }
 //  m->num_layers= i;
-}
+//}
 
 
 
@@ -211,8 +211,7 @@ int main(int argc, char * argv []) {
       exit(-1);
     }
 
-    int i;
-    FILE *fp_model, *fp_results;
+     FILE *fp_model, *fp_results;
     int aux, j;
     char auxstr[200], auxstr2[200], *token, *str;
     printf("Model: %s\n", argv[1]);
