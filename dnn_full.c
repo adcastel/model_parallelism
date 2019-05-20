@@ -211,6 +211,13 @@ int main(int argc, char * argv []) {
       exit(-1);
     }
 
+    /* Some MPI initializations */
+    MPI_Init(&argc, &argv);
+
+    MPI_Comm_size(MPI_COMM_WORLD, &size);
+    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+
+    if(rank == 0){
      FILE *fp_model, *fp_results;
     int aux, j;
     char auxstr[200], auxstr2[200], *token, *str;
@@ -218,19 +225,8 @@ int main(int argc, char * argv []) {
     fp_model= fopen(argv[i], "r");
     printf("layers: %d\n",count_layers(fp_model));
     fclose(fp_model);
-    return;
-    /*    for (i= 3; i < argc; i++){ 
-
-        printf("Model: %s\n", argv[i]);
-        // Read model file
-        fp_model= fopen(argv[i], "r");
-        if (fp_model == NULL){
-          perror("Error opening model file\n");
-          exit(-1);
-        }
-        read_model(fp_model, &param, &model);
-        fclose(fp_model);
-    */
+    }
+    return 0;
     
 #ifdef TIMER
     double scatter_time;
@@ -351,12 +347,7 @@ int main(int argc, char * argv []) {
     MPI_Group groups[NUM_LAYERS], max_procs_group, world_group;
 
 
-    /* Some MPI initializations */
-    MPI_Init(&argc, &argv);
-
-    MPI_Comm_size(MPI_COMM_WORLD, &size);
-    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-
+    
     /* We first calculate the max size of matrix A, B and C so we only 
      * allocate once and reuse them for all the execution */
 
