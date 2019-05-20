@@ -84,10 +84,10 @@ int count_layers(FILE *fp){
   int num_layers= 0;
   while(!feof(fp))
   {
-    ch = fgetc(fp);
+    char ch = fgetc(fp);
     if(ch == '\n')
     {
-      lines++;
+      num_layers++;
     }
   }
   return num_layers;
