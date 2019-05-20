@@ -21,30 +21,10 @@
         fp_comp_gflops_per_thread[s][l] = fp_comp_gflops[s][l]/(1.0*OMP_NUM_THREADS*procs[l]); 
 
 
-/*Threads for the convolution */
-//#define CONV_THREADS 3
 /* Model features */
 
 #define NUM_STEPS  15  // Steps of the simulation
 #define BATCH_SIZE  64 // Batch size
-
-#ifdef ALEXNET
-//#define NUM_LAYERS  9  // Number of layers
-
-#elif defined VGG16 
-//#define NUM_LAYERS  17  // Number of layers
-
-#elif defined RESNET
-#define NUM_LAYERS  55  // Number of layers
-
-#elif defined INCEPTION
-#define NUM_LAYERS  96  // Number of layers
-
-#else //Test
-
-#define NUM_LAYERS  6  // Number of layers
-
-#endif
 
 ///////////////////////////// PARSER ////////////////////////////////
 #define MAX_LEN 1024
@@ -94,87 +74,6 @@ int count_layers(FILE *fp){
 }
 
 //void read_model(FILE *fp, param_t *p, model_t *m){
-
-
-//    /* Model 
-//    int type[NUM_LAYERS] = { INPUT, CONV, CONV, CONV, CONV, CONV, FC, FC, FC}; 
-//    int nneurons[NUM_LAYERS] = { 227*227*3, 55*55*64, 27*27*192 , 13*13*384, 13*13*384, 13*13*256,4096,4096,1001}; //Neurons per layer
-//    int min_size[NUM_LAYERS] = { 0, 16, 16, 16, 16, 16,512,512,512}; //minimum data size per layer
-//    int image_size[NUM_LAYERS] = { 227, 55, 27 , 13, 13, 13, 0,0.0}; //pixels
-//    int nkernels[NUM_LAYERS] = { 0,  64, 192, 384, 384,256,0,0,0}; //kernels per layer
-//    int channels[NUM_LAYERS] = { 3,  64, 192,384,384,256,1, 1, 1}; //channels per layer
-//    int kwidth[NUM_LAYERS] = { 0, 11, 5, 3,3,3,0,0,0}; //Sizes of kernels
-//    int kheight[NUM_LAYERS] = { 0, 11, 5, 3,3,3,0,0,0}; //Sizes of kernels
-//    int vstrides[NUM_LAYERS] = { 0, 4, 1, 1,1,1,0,0,0}; //Stride of kernels
-//    int hstrides[NUM_LAYERS] = { 0, 4, 1, 1,1,1,0,0,0}; //Stride of kernels
-//    */
-//  // int nneurons[num_layers] = { 227*227,  113*113, 56*56, 2048, 1000}; //Neurons per layer
-//  // int nkernels[num_layers] = { 0,  64, 128, 0, 0}; //kernels per layer
-//  // int channels[num_layers] = { 3,  64, 128, 1, 1}; //channels per layer
-//  // int min_size[num_layers] = { 0,  4, 4, 256, 256}; //minimum data size per layer
-//  // int kwidth[num_layers] = { 0, 3, 3, 0,0}; //Sizes of kernels
-//  // int kheight[num_layers] = { 0, 3, 3, 0,0}; //Sizes of kernels
-//  // int vstrides[num_layers] = { 0, 2, 2, 0,0}; //Stride of kernels
-//  // int hstrides[num_layers] = { 0, 2, 2, 0,0}; //Stride of kernels
-//
-//  char line[MAX_LEN];
-//  int i= 0;
-//
-//#ifdef VERBOSE
-//  printf(" ID :   TYPE :    NEURS :  IMS :  CHA :  NKE :  KWD :  KHE :  HST :  VST :  MSZ\n");
-//#endif
-//
-//  fgets(line, MAX_LEN, fp);
-//  while(fgets(line, MAX_LEN, fp)){
-//    char* tmp = strdup(line);
-//    const char* typel = getfield(tmp, 2); 
-//    m->nneurons[i]  = getfield_int(line, 3) * getfield_int(line, 4) * getfield_int(line, 5); // width * height * channels
-//    m->image_size[i]= getfield_int(line, 3);
-//    m->channels[i]  = getfield_int(line, 5);
-//    m->kwidth[i]    = getfield_int(line, 6);
-//    m->kheight[i]   = getfield_int(line, 7);
-//    m->hstrides[i]  = getfield_int(line, 8);
-//    m->vstrides[i]  = getfield_int(line, 9);
-//    m->procs[i]     = getfield_int(line, 10);
-//
-//    if ( !strcmp(typel, "input") ){ 
-//    	m->type[i] = INPUT; m->min_size[i]= 0;           m->nkernels[i]= 0; 
-//    }
-//    else if ( !strcmp(typel, "fc") ){ 
-//    	m->type[i] = FC;    m->min_size[i]= p->minsfc;   m->nkernels[i]= 0; 
-//	    m->channels[i]= 1;  m->kwidth[i]= 0;   m->kheight[i]= 0;   m->image_size[i] = 0; 
-//	  }
-//    else if ( !strcmp(typel, "conv") ){ 
-//    	m->type[i] = CONV;  m->min_size[i]= p->minsconv; m->nkernels[i]= m->channels[i];
-//    } 
-//    else if ( !strcmp(typel, "apool") ){ 
-//    	m->type[i] = APOOL; m->min_size[i]= p->minsconv; m->nkernels[i]= 0; 
-//    }
-//    else if ( !strcmp(typel, "mpool") ){ 
-//    	m->type[i] = MPOOL; m->min_size[i]= p->minsconv; m->nkernels[i]= 0; 
-//    }
-//   
-//#ifdef VERBOSE
-//    printf("%3d : %6s : %8d : %4d : %4d : %4d : %4d : %4d : %4d : %4d : %4d\n",
-//		    i+1, typel, m->nneurons[i], m->image_size[i], m->channels[i], m->nkernels[i],
-//		    m->kwidth[i], m->kheight[i], m->hstrides[i], m->vstrides[i], m->min_size[i]);
-//#endif
-//    free(tmp);
-//    i++;
-//  }
-//  m->num_layers= i;
-//}
-
-
-
-
-
-
-
-
-
-
-
 
 
 /* helper functions */
@@ -237,10 +136,12 @@ int main(int argc, char * argv []) {
      int * kheight = malloc(sizeof(int)*NUM_LAYERS);
      int * vstrides = malloc(sizeof(int)*NUM_LAYERS);
      int * hstrides = malloc(sizeof(int)*NUM_LAYERS);
-     
-    i = 0;
+     int * procs = malloc(sizeof(int)*NUM_LAYERS);
+    char line[MAX_LEN]; 
+    i = 1;
     int minsfc = 512;
     int minsconv = 8;
+    printf("Modelo\n");
     fgets(line, MAX_LEN, fp_model);
     while(fgets(line, MAX_LEN, fp_model)){
       char* tmp = strdup(line);
@@ -271,6 +172,7 @@ int main(int argc, char * argv []) {
     	type[i] = MPOOL; min_size[i]= minsconv; nkernels[i]= 0; 
     }
       i++;
+      printf("type %d, neurons %d, image_size %d, channels %d, kwidth %d, kheight %d, hstrides %d, vstrides %d,  procs %d\n",type[i],nneurons[i] ,image_size[i],channels[i],kwidth[i],kheight[i],hstrides[i],vstrides[i],procs[i]);
     }
     fclose(fp_model);
 
@@ -316,98 +218,9 @@ int main(int argc, char * argv []) {
 #endif
     /* Model */
 
-//#ifdef ALEXNET
-//    int type[NUM_LAYERS] = {INPUT, CONV, CONV, CONV, CONV, CONV, FC, FC, FC};
-//    //Neurons per layer
-//    int nneurons[NUM_LAYERS] = {224 * 224 * 3, 55 * 55 * 64, 27 * 27 * 192, 
-//                13 * 13 * 384, 13 * 13 * 384, 13 * 13 * 256, 4096, 4096, 1001}; 
-//#ifndef STATIC
-//    //minimum data size per layer
-//    int min_size[NUM_LAYERS] = {0, 16, 16, 16, 16, 16, 512, 512, 512}; 
-//#else    
-//    int min_size[NUM_LAYERS] = {0, 1, 1, 1, 1, 1, 1, 1, 1}; 
-//#endif    
-//    int image_size[NUM_LAYERS] = {224, 55, 27, 13, 13, 13, 0, 0.0}; //pixels
-//    int nkernels[NUM_LAYERS] = {0, 64, 192, 384, 384, 256, 0, 0, 0}; //kernels/layer
-//    int channels[NUM_LAYERS] = {3, 64, 192, 384, 384, 256, 1, 1, 1}; //channels/layer
-//    int kwidth[NUM_LAYERS] = {0, 11, 5, 3, 3, 3, 0, 0, 0}; //Sizes of kernels
-//    int kheight[NUM_LAYERS] = {0, 11, 5, 3, 3, 3, 0, 0, 0}; //Sizes of kernels
-//    int vstrides[NUM_LAYERS] = {0, 4, 1, 1, 1, 1, 0, 0, 0}; //Stride of kernels
-//    int hstrides[NUM_LAYERS] = {0, 4, 1, 1, 1, 1, 0, 0, 0}; //Stride of kernels
-//
-//#elif defined VGG16
-//    int type[NUM_LAYERS] = {INPUT, CONV, CONV, CONV, CONV, CONV, CONV, CONV, 
-//                            CONV, CONV, CONV, CONV, CONV, CONV, FC, FC, FC};
-//    //Neurons per layer
-//    int nneurons[NUM_LAYERS] = {224 * 224 * 3, 224 * 224 * 64, 224 * 224 * 64, 
-//                                112 * 112 * 128, 112 * 112 * 128, 56 * 56 * 256,
-//                                56 * 56 * 256, 56 * 56 * 256, 28 * 28 * 512, 
-//                                28 * 28 * 512, 28 * 28 * 512, 14 * 14 * 512, 
-//                                14 * 14 * 512, 14 * 14 * 512, 4096, 4096, 1001}; 
-//#ifndef STATIC
-//    int min_size[NUM_LAYERS] = {0, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 
-//                        16, 16, 512, 512, 512}; //minimum data size per layer
-//#else    
-//    int min_size[NUM_LAYERS] = {0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
-//                                1, 1, 1, 1, 1}; //minimum data size per layer
-//#endif    
-//    int image_size[NUM_LAYERS] = {224, 224, 224, 112, 112, 56, 56, 56, 28, 28, 
-//                                            28, 14, 14, 14, 0, 0, 0}; //pixels
-//    int nkernels[NUM_LAYERS] = {0, 64, 64, 128, 128, 256, 256, 256, 512, 512, 
-//                            512, 512, 512, 512, 0, 0, 0}; //kernels per layer
-//    int channels[NUM_LAYERS] = {3, 64, 64, 128, 128, 256, 256, 256, 512, 512, 
-//                            512, 512, 512, 512, 1, 1, 1}; //channels per layer
-//    int kwidth[NUM_LAYERS] = {0, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 
-//                                                    0, 0, 0}; //Sizes of kernels
-//    int kheight[NUM_LAYERS] = {0, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
-//                                                    0, 0, 0}; //Sizes of kernels
-//    int vstrides[NUM_LAYERS] = {0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
-//                                                   0, 0, 0}; //Stride of kernels
-//    int hstrides[NUM_LAYERS] = {0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
-//                                                   0, 0, 0}; //Stride of kernels
-//
-//#elif defined RESNET
-//
-//#elif defined INCEPTION
-//
-//#else //test
-//#ifdef FULLY
-//    int type[NUM_LAYERS] = {INPUT, FC, FC, FC, FC, FC};
-//    //Neurons per layer
-//    int nneurons[NUM_LAYERS] = {224 * 224 * 3, 2048, 1024, 2048, 4096, 1001}; 
-//#ifndef STATIC
-//    //minimum data size per layer
-//    int min_size[NUM_LAYERS] = {0, 512, 512, 512, 512, 512}; 
-//#else    
-//    int min_size[NUM_LAYERS] = {0, 1, 1, 1, 1, 1}; //minimum data size per layer
-//#endif    
-//#else
-//    int type[NUM_LAYERS] = {INPUT, CONV, CONV, FC, FC, FC};
-//    int nneurons[NUM_LAYERS] = {224 * 224 * 3, 112 * 112 * 64, 56 * 56 * 128, 
-//                                        2048, 4096, 1001}; //Neurons per layer
-//#ifndef STATIC
-//    //minimum data size per layer
-//    int min_size[NUM_LAYERS] = {0, 8, 8, 512, 512, 512};     
-//#else    
-//    int min_size[NUM_LAYERS] = {0, 1, 1, 1, 1, 1}; //minimum data size per layer
-//#endif    
-//
-//#endif    
-//    /* ONLY USED IN CONV LAYERS */
-//    int image_size[NUM_LAYERS] = {224, 112, 56, 0, 0, 0}; //pixels
-//    int nkernels[NUM_LAYERS] = {0, 64, 128, 0, 0, 0}; //kernels per layer
-//    int channels[NUM_LAYERS] = {3, 64, 128, 1, 1, 0}; //channels per layer
-//    int kwidth[NUM_LAYERS] = {0, 11, 3, 0, 0, 0}; //Sizes of kernels
-//    int kheight[NUM_LAYERS] = {0, 11, 3, 0, 0, 0}; //Sizes of kernels
-//    int vstrides[NUM_LAYERS] = {0, 1, 1, 0, 0, 0}; //Stride of kernels
-//    int hstrides[NUM_LAYERS] = {0, 1, 1, 0, 0, 0}; //Stride of kernels
-//
-//#endif
-
 
     const char* env = getenv("OMP_NUM_THREADS");
     int OMP_NUM_THREADS = (env != NULL) ? atoi(env) : 1;
-
     MPI_Comm communicators[NUM_LAYERS], /* world_group,*/ max_procs_comm;
     MPI_Group groups[NUM_LAYERS], max_procs_group, world_group;
 
@@ -497,30 +310,18 @@ int main(int argc, char * argv []) {
     /* With the minimum size, we calculate the number of procs that acts in each layer */
     /* Moreover we calculate the max number of processes working in the model */
     int max_procs = 0; //Variable used for the group and communicator creation;
-#ifndef OPT
-    int procs[NUM_LAYERS]; //number of procs that worker per layer
+    //int procs[NUM_LAYERS]; //number of procs that worker per layer
     for (l = 1; l < NUM_LAYERS; l++) {
         int num_procs;
         if (type[l] == FC) {
-            num_procs = (int) ceil(nneurons[l]*1.0f / min_size[l]);
+            num_procs = (int) ceil(nneurons[l]*1.0f / minsfc);
         } else {
-            num_procs = (int) ceil(nkernels[l]*1.0f / min_size[l]);
+            num_procs = (int) ceil(nkernels[l]*1.0f / minsconv);
         }
         procs[l] = (num_procs > size) ? size : num_procs;
         if (procs[l] > max_procs) max_procs = procs[l];
+        printf("Procs[%d] = %d\n",l,procs[l]);
     }
-#else
-#ifdef ALEXNET
-    int procs[NUM_LAYERS] = {0,2,26,26,22,22,32,22,24};//number of procs that worker per layer
-    max_procs = 32; //Variable used for the group and communicator creation;
-    
-#elif defined VGG16
-    int procs[NUM_LAYERS] = {0,2,2,2,2,26,26,26,22,22,22,24,24,24,28,28,24};//number of procs that worker per layer
-    max_procs = 28; //Variable used for the group and communicator creation;
-#else
-    printf("Error: OPT is defined but the model does not support it\n");
-#endif
-#endif
     procs[0] = procs[1];
 
 
@@ -549,23 +350,6 @@ int main(int argc, char * argv []) {
         MPI_Comm_create_group(MPI_COMM_WORLD, max_procs_group, 0, &max_procs_comm);
     }
 
-    if (rank == 0) {
-#ifdef ALEXNET
-        printf("****AlexNet Model****\n");
-
-#elif defined VGG16
-        printf("****VGG16 Model****\n");
-
-#elif defined RESNET
-        printf("****ResNet-50 Model****\n");
-
-#elif defined INCEPTION
-        printf("****Inception-v3 Model****\n");
-
-#else //Test
-        printf("****Test Model****\n");
-
-#endif
 #ifdef STATIC
 	printf("STATIC ");
 #else
