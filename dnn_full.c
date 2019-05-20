@@ -29,10 +29,10 @@
 #define BATCH_SIZE  64 // Batch size
 
 #ifdef ALEXNET
-#define NUM_LAYERS  9  // Number of layers
+//#define NUM_LAYERS  9  // Number of layers
 
 #elif defined VGG16 
-#define NUM_LAYERS  17  // Number of layers
+//#define NUM_LAYERS  17  // Number of layers
 
 #elif defined RESNET
 #define NUM_LAYERS  55  // Number of layers
@@ -219,37 +219,54 @@ int main(int argc, char * argv []) {
     MPI_Comm_size(MPI_COMM_WORLD, &size);
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
-    if(rank == 0){
     FILE *fp_model, *fp_results;
     int aux, j;
     char auxstr[200], auxstr2[200], *token, *str;
     printf("Model: %s\n", argv[1]);
-    fp_model= fopen(argv[i], "r");
-    printf("layers: %d\n",count_layers(fp_model));
+    fp_model= fopen(argv[1], "r");
+    //printf("layers: %d\n",count_layers(fp_model));
+    int NUM_LAYERS = count_layers(fp_model)-1; //we discard the info line
     fclose(fp_model);
-    }
-    return 0;
-    
+
 #ifdef TIMER
     double scatter_time;
     double step_timer[NUM_STEPS];
     double initial_bcast_timer[NUM_STEPS];
-    double fp_comp_timer[NUM_STEPS][NUM_LAYERS];
-    double fp_im2col_timer[NUM_STEPS][NUM_LAYERS];
-    double fp_comp_gflops[NUM_STEPS][NUM_LAYERS];
-    double fp_comp_gflops_per_thread[NUM_STEPS][NUM_LAYERS];
-    double fp_comm_timer_red[NUM_STEPS][NUM_LAYERS];
-    double fp_comm_timer_bcast[NUM_STEPS][NUM_LAYERS];
-    double cg_comp_timer[NUM_STEPS][NUM_LAYERS];
-    double cg_im2col_timer[NUM_STEPS][NUM_LAYERS];
-    double cg_comp_gflops[NUM_STEPS][NUM_LAYERS];
-    double cg_comp_gflops_per_thread[NUM_STEPS][NUM_LAYERS];
-    double cg_comm_timer_red[NUM_STEPS][NUM_LAYERS];
-    double cg_comm_timer_bcast[NUM_STEPS][NUM_LAYERS];
-    double wu_comp_timer[NUM_STEPS][NUM_LAYERS];
-    double wu_im2col_timer[NUM_STEPS][NUM_LAYERS];
-    double wu_comp_gflops[NUM_STEPS][NUM_LAYERS];
-    double wu_comp_gflops_per_thread[NUM_STEPS][NUM_LAYERS];
+    double * fp_comp_timer[NUM_STEPS];
+    double * fp_im2col_timer[NUM_STEPS];
+    double * fp_comp_gflops[NUM_STEPS];
+    double * fp_comp_gflops_per_thread[NUM_STEPS];
+    double * fp_comm_timer_red[NUM_STEPS];
+    double * fp_comm_timer_bcast[NUM_STEPS];
+    double * cg_comp_timer[NUM_STEPS];
+    double * cg_im2col_timer[NUM_STEPS];
+    double * cg_comp_gflops[NUM_STEPS];
+    double * cg_comp_gflops_per_thread[NUM_STEPS];
+    double * cg_comm_timer_red[NUM_STEPS];
+    double * cg_comm_timer_bcast[NUM_STEPS];
+    double * wu_comp_timer[NUM_STEPS];
+    double * wu_im2col_timer[NUM_STEPS];
+    double * wu_comp_gflops[NUM_STEPS];
+    double * wu_comp_gflops_per_thread[NUM_STEPS];
+    
+    for (i = 0; i < NUM_STEPS; i++){
+    fp_comp_timer[i] = (double *) malloc(sizeof (double) * NUM_LAYERS);
+    fp_im2col_timer[i] = (double *) malloc(sizeof (double) * NUM_LAYERS);
+    fp_comp_gflops[i] = (double *) malloc(sizeof (double) * NUM_LAYERS);
+    fp_comp_gflops_per_thread[i] = (double *) malloc(sizeof (double) * NUM_LAYERS);
+    fp_comm_timer_red[i] = (double *) malloc(sizeof (double) * NUM_LAYERS);
+    fp_comm_timer_bcast[i] = (double *) malloc(sizeof (double) * NUM_LAYERS);
+    cg_comp_timer[i] = (double *) malloc(sizeof (double) * NUM_LAYERS);
+    cg_im2col_timer[i] = (double *) malloc(sizeof (double) * NUM_LAYERS);
+    cg_comp_gflops[i] = (double *) malloc(sizeof (double) * NUM_LAYERS);
+    cg_comp_gflops_per_thread[i] = (double *) malloc(sizeof (double) * NUM_LAYERS);
+    cg_comm_timer_red[i] = (double *) malloc(sizeof (double) * NUM_LAYERS);
+    cg_comm_timer_bcast[i] = (double *) malloc(sizeof (double) * NUM_LAYERS);
+    wu_comp_timer[i] = (double *) malloc(sizeof (double) * NUM_LAYERS);
+    wu_im2col_timer[i] = (double *) malloc(sizeof (double) * NUM_LAYERS);
+    wu_comp_gflops[i] = (double *) malloc(sizeof (double) * NUM_LAYERS);
+    wu_comp_gflops_per_thread[i] = (double *) malloc(sizeof (double) * NUM_LAYERS);
+    }
 #endif
     /* Model */
 
