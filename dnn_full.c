@@ -23,7 +23,7 @@
 
 /* Model features */
 
-#define NUM_STEPS  15  // Steps of the simulation
+#define NUM_STEPS  2  // Steps of the simulation
 #define BATCH_SIZE  64 // Batch size
 
 ///////////////////////////// PARSER ////////////////////////////////
@@ -357,7 +357,7 @@ int main(int argc, char * argv []) {
 #endif
         printf("- %d processes\n", max_procs);
         printf("- %d threads per process\n", OMP_NUM_THREADS);
-    }
+    //}
 
     MPI_Barrier(MPI_COMM_WORLD);
 
@@ -1356,31 +1356,36 @@ void CONV_wu(int K, int B, int H, int W, int KH, int KW, int C, float * I, float
 }
 
 void allgather(int n, float * C, MPI_Comm comm) {
-#ifndef NOCOM    
+#ifndef NOCOM
+    printf("MPI_ALLGATHER %lu\n",n*sizeof(float));   
     MPI_Allgather(C, n, MPI_FLOAT, C, n, MPI_FLOAT, comm);
 #endif
 }
 
 void gather(int n, float * C, MPI_Comm comm) {
 #ifndef NOCOM    
+    printf("MPI_GATHER %lu\n",n*sizeof(float));   
     MPI_Gather(C, n, MPI_FLOAT, C, n, MPI_FLOAT, 0, comm);
 #endif
 }
 
 void allreduce(int n, float * C, MPI_Comm comm) {
 #ifndef NOCOM    
+    printf("MPI_ALLREDUCE %lu\n",n*sizeof(float));   
     MPI_Allreduce(C, C, n, MPI_FLOAT, MPI_SUM, comm);
 #endif
 }
 
 void reduce(int n, float * C, MPI_Comm comm) {
 #ifndef NOCOM    
+    printf("MPI_REDUCE %lu\n",n*sizeof(float));   
     MPI_Reduce(C, C, n, MPI_FLOAT, MPI_SUM, 0, comm);
 #endif
 }
 
 void bcast(int n, float * data, MPI_Comm comm) {
 #ifndef NOCOM
+    printf("MPI_BCAST %lu\n",n*sizeof(float));   
     MPI_Bcast(data, n, MPI_FLOAT, 0, comm);
 #endif
 }
