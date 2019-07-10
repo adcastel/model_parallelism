@@ -138,10 +138,12 @@ int main(int argc, char * argv []) {
      int * hstrides = malloc(sizeof(int)*NUM_LAYERS);
      int * procs = malloc(sizeof(int)*NUM_LAYERS);
     char line[MAX_LEN]; 
-    i = 1;
+    i = 0;
     int minsfc = 512;
     int minsconv = 8;
     printf("Modelo\n");
+    fclose(fp_model);
+    fp_model= fopen(argv[1], "r");
     fgets(line, MAX_LEN, fp_model);
     while(fgets(line, MAX_LEN, fp_model)){
       char* tmp = strdup(line);
@@ -171,8 +173,8 @@ int main(int argc, char * argv []) {
     else if ( !strcmp(typel, "mpool") ){ 
     	type[i] = MPOOL; min_size[i]= minsconv; nkernels[i]= 0; 
     }
-      i++;
       printf("type %d, neurons %d, image_size %d, channels %d, kwidth %d, kheight %d, hstrides %d, vstrides %d,  procs %d\n",type[i],nneurons[i] ,image_size[i],channels[i],kwidth[i],kheight[i],hstrides[i],vstrides[i],procs[i]);
+      i++;
     }
     fclose(fp_model);
 
@@ -391,7 +393,7 @@ int main(int argc, char * argv []) {
 #ifdef TIMER
         scatter_time = MPI_Wtime() - scatter_time;
 #endif
-
+        
         for (s = 0; s < NUM_STEPS; s++) {
 #ifdef PROGRESS
             printf("Starting Step %d\n", s);
@@ -409,9 +411,14 @@ int main(int argc, char * argv []) {
 #ifdef TIMER
             initial_bcast_timer[s] = MPI_Wtime() - initial_bcast_timer[s];
 #endif
+} //QUITAR ESTOS DOS PARENTESIS
+}
+return 0;
+{
+{
             //Forward pass
             for (l = 1; l < NUM_LAYERS - 1; l++) {
-                //printf("FP layer %d\n",l);
+                printf("FP layer %d\n",l);
                 /* We need both, the procs for current and next layers */
                 if (rank < procs[l] || rank < procs[l + 1]) {
                     /* procs in the current layer computes and gathers to root */
@@ -447,6 +454,7 @@ int main(int argc, char * argv []) {
                             fp_comm_timer_red[s][l] = MPI_Wtime() - fp_comm_timer_red[s][l];
 #endif
                         } else { //conv
+                            printf("%d is CONV\n",l);
                             int num_kernels = problem_size(nkernels[l], procs[l], rank); //nneurons[l]/procs[l];//antes /size
                             int b = BATCH_SIZE;
                             int h = image_size[l - 1];
@@ -459,8 +467,8 @@ int main(int argc, char * argv []) {
                             fp_comp_timer[s][l] = MPI_Wtime();
 #endif
 			    //printf("CONV_fp(%d,%d,%d,%d,%d,%d,%d)\n",num_kernels, b, h, w, kh, kw, c);
-                            CONV_fp(l, num_kernels, b, h, w, kh, kw, c,
-                                    conv_i, conv_ip, conv_o, conv_f, &fp_im2col_timer[s][l]);
+                            //CONV_fp(l, num_kernels, b, h, w, kh, kw, c,
+                              //      conv_i, conv_ip, conv_o, conv_f, &fp_im2col_timer[s][l]);
 			    //printf("END CONV_fp(%d,%d,%d,%d,%d,%d,%d)\n",num_kernels, b, h, w, kh, kw, c);
 
 #ifdef TIMER
@@ -522,7 +530,7 @@ int main(int argc, char * argv []) {
             /* This layer is isolated because the code is more easy to follow right now */
             //last layer in FP
             int ll = NUM_LAYERS - 1;
-            //printf("FP layer %d\n",ll);
+            printf("FP layer %d\n",ll);
             if (rank < procs[ll]) {
                 if (type[ll] == FC) { //FC
                     int m = problem_size(nneurons[ll], procs[ll], rank); //nneurons[l]/procs[l];//antes /size
@@ -565,9 +573,9 @@ int main(int argc, char * argv []) {
                     fp_comp_timer[s][ll] = MPI_Wtime();
 #endif
                     //printf("Rank = %d ", rank);
-                    CONV_fp(ll, num_kernels, b, h, w, kh, kw, c,
-                            conv_i, conv_ip, conv_o, conv_f, 
-                            &fp_im2col_timer[s][ll]);
+                    //CONV_fp(ll, num_kernels, b, h, w, kh, kw, c,
+                      //      conv_i, conv_ip, conv_o, conv_f, 
+                        //    &fp_im2col_timer[s][ll]);
 
 #ifdef TIMER
                     fp_comp_timer[s][ll] = MPI_Wtime() - fp_comp_timer[s][ll];
@@ -600,7 +608,7 @@ int main(int argc, char * argv []) {
             //We do not take into account the CG computation because it is quadratic
             // In this version we assume that the last layer is a FC
             //CG
-            //printf("CG layer %d\n",NUM_LAYERS-1);
+            printf("CG layer %d\n",NUM_LAYERS-1);
             if (rank < procs[NUM_LAYERS - 1] || rank < procs[NUM_LAYERS - 2]) {
                 if (rank < procs[NUM_LAYERS - 1]) {
                     /* FIXED ADRIAN 05-2019 The reduction is over all the Gradient*/
@@ -628,7 +636,7 @@ int main(int argc, char * argv []) {
                 }
             }
             //WU
-            //printf("WU layer %d\n",NUM_LAYERS-1);
+            printf("WU layer %d\n",NUM_LAYERS-1);
             if (rank < procs[NUM_LAYERS - 1]) {
                 if (type[NUM_LAYERS - 1] == FC) { //FC
                     int m = problem_size(nneurons[NUM_LAYERS - 1], procs[NUM_LAYERS - 1], rank);
@@ -657,7 +665,7 @@ int main(int argc, char * argv []) {
 
             //Central layers
             for (l = NUM_LAYERS - 2; l >= 2; l--) {
-                ////printf("CG layer %d\n",l);
+                printf("CG layer %d\n",l);
                 //CG
                 //if (type[l] == FC) { //FC
                 if ( type[l] == FC || (type[l] == CONV && type[l+1] == FC)) {
@@ -720,9 +728,9 @@ int main(int argc, char * argv []) {
 #endif
                             //We swap conv_i and conv_o
                             ////printf("CONV_CG\n");
-                            CONV_cg(num_kernels, b, h, w, kh, kw, c, 
-                                    conv_i, conv_ip, conv_o, conv_f, 
-                                    &cg_im2col_timer[s][l]);
+                            //CONV_cg(num_kernels, b, h, w, kh, kw, c, 
+                              //      conv_i, conv_ip, conv_o, conv_f, 
+                                //    &cg_im2col_timer[s][l]);
                             //printf("END CONV_CG\n");
 
 #ifdef TIMER
@@ -762,7 +770,7 @@ int main(int argc, char * argv []) {
                     }
                 }
                 //WU
-               // printf("WU layer %d\n",l);
+                printf("WU layer %d\n",l);
                 if (rank < procs[l]) {
                     if (type[l] == FC) { //FC
                         int m = problem_size(nneurons[l], procs[l], rank);
@@ -797,9 +805,9 @@ int main(int argc, char * argv []) {
 #endif
                             ////printf("CONV_WU\n");
                         //We swap f and o because the kernels are stored in f
-                        CONV_wu(num_kernels, b, h, w, kh, kw, c, 
-                                conv_i, conv_ip, conv_o, conv_f, 
-                                &wu_im2col_timer[s][l]);
+                        //CONV_wu(num_kernels, b, h, w, kh, kw, c, 
+                          //      conv_i, conv_ip, conv_o, conv_f, 
+                            //    &wu_im2col_timer[s][l]);
                             //printf("END CONV_WU\n");
 
 #ifdef TIMER
@@ -819,7 +827,7 @@ int main(int argc, char * argv []) {
             /* Now we compute the BP of the first layer */
             //CG
             int fl = 1;
-            //printf("CG layer %d\n",fl);
+            printf("CG layer %d\n",fl);
             if (type[fl] == FC) { //FC
                 if (rank < procs[fl + 1]) {
                     int m = nneurons[fl];
@@ -864,9 +872,9 @@ int main(int argc, char * argv []) {
                     cg_comp_timer[s][fl] = MPI_Wtime();
 #endif           
                     //We swap input and output
-                    CONV_cg(num_kernels, b, h, w, kh, kw, c, 
-                          conv_i, conv_ip, conv_o, conv_f, 
-                            &cg_im2col_timer[s][fl]);
+                    //CONV_cg(num_kernels, b, h, w, kh, kw, c, 
+                      //    conv_i, conv_ip, conv_o, conv_f, 
+                        //    &cg_im2col_timer[s][fl]);
 
 #ifdef TIMER
                     cg_comp_timer[s][fl] = MPI_Wtime() - cg_comp_timer[s][fl];
@@ -891,7 +899,7 @@ int main(int argc, char * argv []) {
                 }
             }
             //WU
-            //printf("WU layer %d\n",fl);
+            printf("WU layer %d\n",fl);
             if (rank < procs[fl]) {
                 if (type[fl] == FC) { //FC
                     int m = problem_size(nneurons[fl], procs[fl], rank);
@@ -925,9 +933,9 @@ int main(int argc, char * argv []) {
 #ifdef TIMER
                     wu_comp_timer[s][fl] = MPI_Wtime();
 #endif
-                    CONV_wu(num_kernels, b, h, w, kh, kw, c, 
-                            conv_i, conv_ip, conv_o, conv_f, 
-                            &wu_im2col_timer[s][fl]);
+                    //CONV_wu(num_kernels, b, h, w, kh, kw, c, 
+                            //conv_i, conv_ip, conv_o, conv_f, 
+                            //&wu_im2col_timer[s][fl]);
 
 #ifdef TIMER
                     wu_comp_timer[s][fl] = MPI_Wtime() - wu_comp_timer[s][fl];
@@ -1091,7 +1099,7 @@ int main(int argc, char * argv []) {
 
 void FC_gemm_fp(int m, int n, int k, float * A, int lda, float * B, int ldb, float * C, int ldc) {
     cblas_sgemm(CblasColMajor, CblasNoTrans, CblasNoTrans,
-            m, n, k, 1,
+           m, n, k, 1,
             A, lda, B, ldb, 0, C, ldc);
     //printf("FP  FC  GEMM m(%d) : n(%d) : k(%d)\n", m, n, k);
 }
@@ -1159,26 +1167,6 @@ void CONV_fp(int l, int K, int B, int H, int W, int KH, int KW, int C, float * I
             }
         }
     }
-    /*
-
-
-        int kk1 = KH*KW*B*H*W;
-         int kk2 = KW*B*H*W;
-         int kk3 = B*H*W;
-         int kk4 = H*W;
-         int kk5 = B*(H+KH)*(W+KW);
-         int kk6 = (H+KH)*(W+KW);
-         int kk7 = (W+KW);
-        #pragma omp parallel for private(b,h,w,kh,kw)
-        for ( c = 0; c < C; c++ ) 
-            for ( b = 0; b < B; b++ )
-                 for ( kh = 0; kh < KH; kh++ )
-                    for ( kw = 0; kw < KW; kw++ )
-                        for ( h = 0; h < H; h++ ) 
-                            for ( w = 0; w < W; w++ ) 
-                                IP[ c*kk1 + kh*kk2 + kw*kk3 + b*kk4 + h*W + w ] = I[ c*kk5 + b*kk6 + (h+kh)*kk7 + w + kw ];
-
-     */
 #ifdef TIMER
     *time = MPI_Wtime() - *time;
     /* char processor_name[MPI_MAX_PROCESSOR_NAME];
@@ -1199,7 +1187,6 @@ void CONV_fp(int l, int K, int B, int H, int W, int KH, int KW, int C, float * I
 
     cblas_sgemm(CblasColMajor, CblasNoTrans, CblasNoTrans,
             m, n, k, 1,
-            //miF, lda, miIP, ldb,0,miO,ldc);
             F, lda, IP, ldb, 0, O, ldc);
 //printf("despues de gemm\n");
 
@@ -1295,7 +1282,7 @@ void CONV_wu(int K, int B, int H, int W, int KH, int KW, int C, float * I, float
     *time = MPI_Wtime();
 #endif
     // Im2col: I -> IP
-    /* int kk1 = KH * KW * B * H*W;
+    int kk1 = KH * KW * B * H*W;
     int kk2 = KW * B * H*W;
     int kk3 = B * H*W;
     int kk4 = H*W;
@@ -1325,7 +1312,7 @@ void CONV_wu(int K, int B, int H, int W, int KH, int KW, int C, float * I, float
                 }
             }
         }
-    }*/
+    }
 
     /*float * wu_i = (float *) malloc(C*B*H*W*sizeof(float));
     float * wu_ip = (float *) malloc(C*KW*KH*B*H*W*sizeof(float));
@@ -1392,6 +1379,7 @@ void bcast(int n, float * data, MPI_Comm comm) {
 
 void scatter(size_t n, float * buff, MPI_Comm comm) {
 #ifndef NOCOM    
+    printf("MPI_SCATTER %lu\n",n*sizeof(float));   
     MPI_Scatter(buff, n, MPI_FLOAT, buff, n, MPI_FLOAT, 0, comm);
 #endif
 }
