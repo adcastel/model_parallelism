@@ -2,8 +2,9 @@
 
 This simulator mimics de behavior of an environment for distributed DNN training when using the Model parallelism approach.
 This code is (right now) under development (but not in the main task road) and there is not any release version. 
-The dnn.c file allows to execute a simulation of AlexNet and VGG16 CNN.
-The dnn_full.c is still incomplete and pretend to read the models from a cvs file. It crashes in some hardware and we are fixing it (when we have time).
+The dnn_full.c is still incomplete and pretend to read the models from a cvs file. It crashes in some hardware and we are fixing it (when we have time). 
+
+alexnet.csv file is an exemple of the format needed for introducing a model.
 
 You are wellcomed to participate in this code to make it full-operative.
 
