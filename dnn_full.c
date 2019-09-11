@@ -121,11 +121,13 @@ int main(int argc, char * argv []) {
     FILE *fp_model, *fp_results;
     int aux, j;
     char auxstr[200], auxstr2[200], *token, *str;
+    if(rank == 0)
     printf("Model: %s\n", argv[1]);
     fp_model= fopen(argv[1], "r");
     //printf("layers: %d\n",count_layers(fp_model));
     int NUM_LAYERS = count_layers(fp_model)-1; //we discard the info line
     
+    fclose(fp_model);
      int * type = malloc(sizeof(int)*NUM_LAYERS);
      int * nneurons = malloc(sizeof(int)*NUM_LAYERS);
      int * min_size = malloc(sizeof(int)*NUM_LAYERS);
@@ -138,10 +140,11 @@ int main(int argc, char * argv []) {
      int * hstrides = malloc(sizeof(int)*NUM_LAYERS);
      int * procs = malloc(sizeof(int)*NUM_LAYERS);
     char line[MAX_LEN]; 
-    i = 1;
+    i = 0;
     int minsfc = 512;
     int minsconv = 8;
-    printf("Modelo\n");
+    
+    fp_model= fopen(argv[1], "r");
     fgets(line, MAX_LEN, fp_model);
     while(fgets(line, MAX_LEN, fp_model)){
       char* tmp = strdup(line);
@@ -171,8 +174,9 @@ int main(int argc, char * argv []) {
     else if ( !strcmp(typel, "mpool") ){ 
     	type[i] = MPOOL; min_size[i]= minsconv; nkernels[i]= 0; 
     }
-      i++;
+    if(rank == 0)
       printf("type %d, neurons %d, image_size %d, channels %d, kwidth %d, kheight %d, hstrides %d, vstrides %d,  procs %d\n",type[i],nneurons[i] ,image_size[i],channels[i],kwidth[i],kheight[i],hstrides[i],vstrides[i],procs[i]);
+      i++;
     }
     fclose(fp_model);
 
@@ -320,6 +324,7 @@ int main(int argc, char * argv []) {
         }
         procs[l] = (num_procs > size) ? size : num_procs;
         if (procs[l] > max_procs) max_procs = procs[l];
+        if(rank == 0)
         printf("Procs[%d] = %d\n",l,procs[l]);
     }
     procs[0] = procs[1];
@@ -394,6 +399,7 @@ int main(int argc, char * argv []) {
 
         for (s = 0; s < NUM_STEPS; s++) {
 #ifdef PROGRESS
+      		if(rank == 0)
             printf("Starting Step %d\n", s);
 #endif
 #ifdef TIMER
